@@ -1,0 +1,2140 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>ACUVUE GLB Viewer (흰색/ 블루)</title>
+
+  <style>
+    /* =========================
+       ✅ ACUVUE White + Blue Theme (색상만 교체)
+       - 다른 로직/구조/JS 미수정(요청 반영: 설명창 고급 효과 + PVP 원형 확대/정렬)
+       ========================= */
+
+    :root{
+      --acuvue-blue:#005EB8;
+      --acuvue-blue-2:#1E78D6;
+      --acuvue-soft:#EAF3FF;
+      --acuvue-soft-2:#F5F9FF;
+      --text-navy:#0B1F33;
+      --text-sub:#30485F;
+      --line:#D9E6F5;
+      --shadow:0 18px 60px rgba(11,31,51,.18);
+      --glass:rgba(255,255,255,.86);
+      --glass-2:rgba(255,255,255,.72);
+
+      /* ✅ 설명창(패널) 고급 분리용 톤 */
+      --panel-grad: linear-gradient(180deg, rgba(234,243,255,.92) 0%, rgba(255,255,255,.90) 55%, rgba(245,249,255,.86) 100%);
+      --panel-stroke: rgba(0,94,184,.18);
+      --panel-stroke-2: rgba(11,31,51,.10);
+      --panel-glow: 0 16px 50px rgba(0,94,184,.10), 0 18px 60px rgba(11,31,51,.14);
+      --panel-topline: linear-gradient(90deg, rgba(0,94,184,.75), rgba(0,94,184,.12));
+    }
+
+    html,body{
+      height:100%;
+      margin:0;
+      background:linear-gradient(180deg, var(--acuvue-soft-2) 0%, #ffffff 55%, var(--acuvue-soft-2) 100%);
+      overflow:hidden;
+      font-family:-apple-system,system-ui;
+      color:var(--text-navy);
+    }
+
+    model-viewer{width:100vw;height:100vh;background:transparent;display:block;position:fixed;inset:0;z-index:1;}
+
+    /* 상단 미션 카드 */
+    #missionBar{
+      position:fixed; left:12px; right:12px; top:12px; z-index:40;
+      display:flex; gap:10px; align-items:stretch;
+      pointer-events:auto;
+    }
+    .missionCard{
+      flex:1;
+      padding:12px 12px;
+      border-radius:16px;
+      background:var(--glass);
+      border:1px solid var(--line);
+      color:var(--text-navy);
+      backdrop-filter: blur(10px);
+      min-height:86px;
+      box-sizing:border-box;
+
+      -webkit-tap-highlight-color: transparent;
+      user-select:none;
+      cursor:pointer;
+      transition: transform .08s ease, background .18s ease, border-color .18s ease;
+      position:relative;
+      box-shadow: 0 10px 28px rgba(11,31,51,.08);
+    }
+    .missionCard:active{ transform: scale(.99); }
+
+    .missionCard.on{
+      background:rgba(0,94,184,.10);
+      border-color:rgba(0,94,184,.35);
+    }
+
+    .missionCard.done::after{
+      content:"완료";
+      position:absolute;
+      right:10px; top:10px;
+      font-size:11px;
+      font-weight:900;
+      padding:4px 8px;
+      border-radius:999px;
+      background:rgba(0,94,184,.12);
+      border:1px solid rgba(0,94,184,.35);
+      color:var(--acuvue-blue);
+      backdrop-filter: blur(6px);
+    }
+
+    .missionNo{font-weight:900;opacity:.85;font-size:14px;margin-bottom:6px;color:var(--text-sub);}
+    .missionTitle{font-weight:900;font-size:16px;margin-bottom:6px;color:var(--text-navy);}
+    .missionDesc{font-size:12.5px;line-height:1.35;opacity:.9;white-space:pre-line;color:var(--text-sub);}
+
+    /* 하단 버튼 */
+    #bottomBtns{
+      position:fixed;left:12px;right:12px;bottom:12px;z-index:50;
+      display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    }
+    .btn{
+      flex:1;min-width:140px;
+      padding:12px 12px;border-radius:14px;
+      border:1px solid var(--line);
+      background:var(--glass);
+      color:var(--text-navy);
+      font-weight:900;font-size:13px;
+      -webkit-tap-highlight-color: transparent;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 28px rgba(11,31,51,.10);
+    }
+    .btn.primary{
+      background:var(--acuvue-blue);
+      border-color:rgba(0,94,184,.65);
+      color:#ffffff;
+    }
+
+    /* 작은 원형 ↺ 버튼 */
+    #btnReset{
+      width:46px;height:46px;min-width:46px;flex:0 0 auto;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:var(--glass);
+      color:var(--text-navy);
+      font-weight:900;
+      font-size:16px;
+      display:flex;align-items:center;justify-content:center;
+      backdrop-filter: blur(10px);
+      -webkit-tap-highlight-color: transparent;
+      box-shadow: 0 10px 28px rgba(11,31,51,.10);
+    }
+
+    /* =========================
+       ✅ 블루라이트: 상태 pill + 광선(투과/꺾임) + 설명/미션
+       ========================= */
+
+    #bluePill{
+      position:fixed;
+      right:14px;
+      bottom:210px;
+      z-index:72;
+      display:none;
+
+      padding:6px;
+      border-radius:999px;
+      background:var(--glass);
+      border:1px solid var(--line);
+      backdrop-filter: blur(12px);
+      -webkit-tap-highlight-color: transparent;
+      user-select:none;
+      box-shadow: var(--shadow);
+
+      gap:6px;
+      align-items:center;
+      white-space:nowrap;
+    }
+    .blueSegBtn{
+      padding:9px 12px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(0,94,184,.06);
+      color:var(--acuvue-blue);
+      font-weight:900;
+      font-size:13px;
+      letter-spacing:.2px;
+      cursor:pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .blueSegBtn:active{ transform:scale(.98); }
+    .blueSegBtn.on{
+      background:var(--acuvue-blue);
+      border-color:rgba(0,94,184,.65);
+      color:#ffffff;
+    }
+
+    #blueRayLayer{
+      position:fixed;
+      inset:0;
+      z-index:200;
+      pointer-events:none;
+      display:none;
+    }
+    #blueRaySvg{
+      width:100%;
+      height:100%;
+      display:block;
+    }
+
+    #blueRayLayerBack{
+      position:fixed;
+      inset:0;
+      z-index:0;           /* ✅ 렌즈(model-viewer) 뒤로 */
+      pointer-events:none;
+      display:none;
+    }
+    #blueRaySvgBack{
+      width:100%;
+      height:100%;
+      display:block;
+    }
+
+
+    
+    /* ✅ 출사광(beamOut)만 렌즈 뒤로 보내기용 레이어 */
+    #blueRayBehind{
+      position:fixed;
+      inset:0;
+      z-index:10; /* model-viewer(z=20)보다 아래 */
+      pointer-events:none;
+      display:none;
+    }
+    #blueRaySvgBack{
+      width:100%;
+      height:100%;
+      display:block;
+    }
+#blueBackGlow{
+      position:fixed;
+      inset:0;
+      z-index:199;
+      pointer-events:none;
+      display:none;
+      background:
+        radial-gradient(35% 22% at 66% 52%,
+          rgba(0,94,184,.18) 0%,
+          rgba(0,94,184,.12) 22%,
+          rgba(0,94,184,.08) 38%,
+          rgba(0,94,184,0) 62%);
+      filter: blur(1px);
+      opacity:.95;
+    }
+
+    /* ✅ 하단 설명/미션 패널 (고급 분리: 아주 옅은 하늘/그레이 그라데이션 + 상단 라인) */
+    #blueInfo{
+      position:fixed;
+      left:12px;
+      right:12px;
+      bottom:92px;
+      z-index:71;
+      display:none;
+      border-radius:14px;
+      border:1px solid var(--panel-stroke);
+      background: var(--panel-grad);
+      backdrop-filter: blur(14px);
+      box-shadow: var(--panel-glow);
+      overflow:hidden;
+    }
+    #blueInfo::before{
+      content:"";
+      position:absolute;
+      left:0; right:0; top:0;
+      height:2px;
+      background: var(--panel-topline);
+      opacity:.95;
+      pointer-events:none;
+    }
+    #blueInfo::after{
+      content:"";
+      position:absolute; inset:0;
+      border-radius:14px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.45);
+      pointer-events:none;
+      opacity:.55;
+    }
+
+    #blueInfoTop{
+      padding:10px 12px;
+      border-bottom:1px solid rgba(11,31,51,.10);
+      color:var(--text-navy);
+      font-weight:900;
+      font-size:13px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    #blueInfoTop b{ font-weight:900; }
+    #blueInfoTop b .pct{ color:var(--acuvue-blue); }
+
+    #blueInfoBody{
+      padding:10px 12px;
+      color:var(--text-sub);
+      font-size:12.5px;
+      line-height:1.35;
+    }
+
+    #blueInfoMission{
+      padding:9px 12px;
+      border-top:1px solid rgba(11,31,51,.10);
+      color:var(--text-navy);
+      font-size:12.5px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    #blueInfoMission .left{
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      flex:1 1 auto;
+      color:var(--text-sub);
+    }
+    #blueInfoMission .confirm{
+      color:#ffffff;
+      font-weight:900;
+      opacity:1;
+      cursor:pointer;
+      user-select:none;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(0,94,184,.65);
+      background:var(--acuvue-blue);
+      backdrop-filter: blur(8px);
+      -webkit-tap-highlight-color: transparent;
+      flex:0 0 auto;
+      white-space:nowrap;
+      display:none;
+      box-shadow: 0 10px 22px rgba(0,94,184,.22);
+    }
+    #blueInfoMission .confirm:active{ transform:scale(.98); }
+
+    /* ========================= */
+
+    /* ASD 오버레이 */
+    #asdOverlay{
+      position:fixed; inset:0; z-index:80;
+      display:none;
+      background:rgba(11,31,51,.22);
+      backdrop-filter: blur(12px);
+      align-items:center; justify-content:center;
+      padding:18px;
+      box-sizing:border-box;
+    }
+    #asdOverlay.show{ display:flex; }
+    #asdCard{
+      width:min(920px, 96vw);
+      border-radius:18px;
+      border:1px solid var(--panel-stroke);
+      background: var(--panel-grad);
+      overflow:hidden;
+      box-shadow: var(--panel-glow);
+      position:relative;
+    }
+    #asdCard::before{
+      content:"";
+      position:absolute;
+      left:0; right:0; top:0;
+      height:2px;
+      background: var(--panel-topline);
+      opacity:.95;
+      pointer-events:none;
+    }
+    #asdCard::after{
+      content:"";
+      position:absolute; inset:0;
+      border-radius:18px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.45);
+      pointer-events:none;
+      opacity:.55;
+    }
+
+    #asdCard img:not(#asdLensImg):not(#asdEyeMV){
+      width:100%;
+      height:auto;
+      display:block;
+      background:rgba(0,94,184,.03);
+    }
+
+    #asdClose{
+      position:absolute; right:10px; top:10px;
+      width:38px; height:38px; border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.92);
+      color:var(--text-navy);
+      font-weight:900;
+      -webkit-tap-highlight-color: transparent;
+      z-index:6;
+      box-shadow: 0 10px 18px rgba(11,31,51,.12);
+    }
+    #asdHint{
+      padding:10px 12px;
+      color:var(--text-sub);
+      font-size:12.5px;
+      opacity:.95;
+      border-top:1px solid rgba(11,31,51,.10);
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px;
+      background: linear-gradient(180deg, rgba(234,243,255,.70) 0%, rgba(255,255,255,.55) 100%);
+    }
+    #asdHint button{
+      border:1px solid rgba(0,94,184,.65);
+      background:var(--acuvue-blue);
+      color:#ffffff;
+      font-weight:900;
+      font-size:12px;
+      padding:8px 10px;
+      border-radius:12px;
+      -webkit-tap-highlight-color: transparent;
+      backdrop-filter: blur(8px);
+      cursor:pointer;
+      flex:0 0 auto;
+      white-space:nowrap;
+      box-shadow: 0 10px 22px rgba(0,94,184,.22);
+    }
+    #asdHint button:active{ transform:scale(.98); }
+
+    #asdScene{
+      position:relative;
+      width:100%;
+      background:rgba(0,94,184,.03);
+      overflow:hidden;
+      aspect-ratio: 1/1;
+      min-height: 360px;
+      --irisX: 13px;
+      --irisY: 26px;
+    }
+
+    #asdEyeMV{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      display:block;
+      background:transparent;
+      pointer-events:none;
+      object-fit:cover;
+      transform: scale(1.55);
+      transform-origin:center;
+      filter: contrast(1.02) saturate(1.02);
+    }
+
+    #asdUpperLid{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      display:block;
+      pointer-events:none;
+      object-fit:cover;
+      transform: scale(1.55) translateY(3px);
+      transform-origin:center;
+      z-index:3; /* ✅ 렌즈 위에 덮이도록 */
+      filter: drop-shadow(0 2px 10px rgba(0,0,0,.18));
+    }
+
+
+    #asdLensImg{
+      position:absolute;
+      left:50%;
+      top:52%;
+      width:80%;
+      transform: translate(calc(-50% - 4px), calc(-50% + 10px)) rotate(20deg);
+      transform-origin:50% 50% scale(1.35);
+      opacity:.70;
+      mix-blend-mode: normal;
+      filter:saturate(1.08) contrast(1.06);
+      pointer-events:none;
+      will-change: transform, opacity;
+    }
+    #asdLensRim{
+      position:absolute;
+      left:50%;
+      top:52%;
+      width:80%;
+      height:80%;
+      transform:translate(-50%,-50%);
+      border-radius:999px;
+      pointer-events:none;
+      box-shadow:
+        0 0 0 1px rgba(11,31,51,.10),
+        0 18px 46px rgba(11,31,51,.16),
+        inset 0 0 24px rgba(255,255,255,.18);
+      opacity:.45;
+      mix-blend-mode: screen;
+    }
+    #asdMaskShade{
+      position:absolute; inset:0;
+      pointer-events:none;
+      background:
+        radial-gradient(110% 70% at 50% 18%,
+          rgba(11,31,51,.38) 0%,
+          rgba(11,31,51,.16) 32%,
+          rgba(11,31,51,0) 58%),
+        radial-gradient(110% 70% at 50% 90%,
+          rgba(11,31,51,.34) 0%,
+          rgba(11,31,51,.14) 34%,
+          rgba(11,31,51,0) 60%);
+      mix-blend-mode: multiply;
+      opacity:.78;
+    }
+
+    #asdBlinkLid{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      z-index:4;
+    }
+    #asdLidTop, #asdLidBot{
+      position:absolute;
+      left:0; right:0;
+      height:55%;
+      background:
+        radial-gradient(120% 90% at 50% 85%,
+          rgba(165,120,95,.98) 0%,
+          rgba(120,80,62,.98) 46%,
+          rgba(40,25,22,.98) 92%);
+      filter: blur(.2px);
+      opacity:0;
+      transform: translateY(-110%);
+      will-change: transform, opacity;
+    }
+    #asdLidBot{
+      top:auto; bottom:0;
+      background:
+        radial-gradient(120% 90% at 50% 15%,
+          rgba(165,120,95,.98) 0%,
+          rgba(120,80,62,.98) 46%,
+          rgba(40,25,22,.98) 92%);
+      transform: translateY(110%);
+    }
+    #asdLidTop::after, #asdLidBot::after{
+      content:"";
+      position:absolute;
+      left:-10%; right:-10%;
+      height:28px;
+      background: radial-gradient(120% 100% at 50% 50%,
+        rgba(0,0,0,.35) 0%,
+        rgba(0,0,0,.18) 35%,
+        rgba(0,0,0,0) 70%);
+      opacity:.55;
+    }
+    #asdLidTop::after{ bottom:-12px; }
+    #asdLidBot::after{ top:-12px; transform: scaleY(-1); }
+
+    #asdBlinkBtn{
+      position:absolute;
+      right:14px;
+      bottom:14px;
+      width:54px;
+      height:54px;
+      border-radius:999px;
+      border:1px solid rgba(0,94,184,.55);
+      background:var(--acuvue-blue);
+      backdrop-filter: blur(10px);
+      color:#ffffff;
+      font-weight:900;
+      font-size:12px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      -webkit-tap-highlight-color: transparent;
+      user-select:none;
+      cursor:pointer;
+      box-shadow: 0 12px 26px rgba(0,94,184,.20);
+      z-index:5;
+    }
+    #asdBlinkBtn:active{ transform:scale(.95); }
+    #asdRotateBtn{
+      position:absolute;
+      right:76px;
+      bottom:14px;
+      width:54px;
+      height:54px;
+      border-radius:999px;
+      border: 1px solid rgba(0,94,184,.35);
+      background: rgba(255,255,255,.92);
+      backdrop-filter: blur(10px);
+      color:var(--acuvue-blue);
+      font-weight:900;
+      font-size:12px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      -webkit-tap-highlight-color: transparent;
+      user-select:none;
+      cursor:pointer;
+      box-shadow: 0 10px 22px rgba(11,31,51,.12);
+      z-index:5;
+    }
+    #asdRotateBtn:active{ transform:scale(.95); }
+
+    #asdAngleBadge{
+      position:absolute;
+      left:14px;
+      bottom:18px;
+      color:var(--acuvue-blue);
+      font-size:12px;
+      font-weight:900;
+      text-shadow:none;
+      background:rgba(255,255,255,.86);
+      border:1px solid rgba(0,94,184,.35);
+      border-radius:999px;
+      padding:6px 10px;
+      backdrop-filter: blur(8px);
+      z-index:5;
+      box-shadow: 0 10px 22px rgba(11,31,51,.10);
+    }
+
+    /* =========================
+       ✅ PVP 원형: 렌즈 중앙 정렬 + 살짝 더 크게 + 팝업 확대 애니메이션
+       ========================= */
+
+    @keyframes pvpPop {
+      0%   { transform: translate(-50%,-50%) scale(.94); opacity: 0; }
+      60%  { transform: translate(-50%,-50%) scale(1.02); opacity: 1; }
+      100% { transform: translate(-50%,-50%) scale(1.00); opacity: 1; }
+    }
+
+    #pvpBig{
+      position:fixed;
+      left:50%;
+      top:50%;
+      transform:translate(-50%,-50%);
+      width:min(76vw, 560px);
+      height:min(76vw, 560px);
+      border-radius:999px;
+      z-index:56;
+      display:none;
+      pointer-events:none;
+      background:rgba(0,94,184,.04);
+      border:1px solid var(--panel-stroke);
+      backdrop-filter: blur(10px);
+      overflow:hidden;
+      box-shadow: var(--panel-glow);
+    }
+    #pvpBig.show{
+      display:block;
+      animation: pvpPop 220ms ease-out both;
+    }
+    #pvpBig img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      border-radius:999px;
+      filter:saturate(1.05) contrast(1.02);
+      transform: scale(1.02);
+      transform-origin:center;
+    }
+    #pvpBig::after{
+      content:"";
+      position:absolute; inset:0;
+      border-radius:999px;
+      box-shadow: inset 0 0 0 2px rgba(0,94,184,.08), inset 0 0 26px rgba(0,94,184,.06);
+      pointer-events:none;
+    }
+
+    /* PVP 하단 설명 (고급 분리) */
+    #pvpOverlay{
+      position:fixed; left:12px; right:12px; bottom:92px; z-index:60;
+      background: var(--panel-grad);
+      border:1px solid var(--panel-stroke);
+      border-radius:14px;
+      padding:10px 10px;
+      display:none;
+      gap:10px;
+      align-items:center;
+      backdrop-filter: blur(12px);
+      box-shadow: var(--panel-glow);
+      overflow:hidden;
+    }
+    #pvpOverlay::before{
+      content:"";
+      position:absolute;
+      left:0; right:0; top:0;
+      height:2px;
+      background: var(--panel-topline);
+      opacity:.95;
+      pointer-events:none;
+    }
+    #pvpOverlay::after{
+      content:"";
+      position:absolute; inset:0;
+      border-radius:14px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.45);
+      pointer-events:none;
+      opacity:.55;
+    }
+
+    #pvpOverlay.show{ display:flex; }
+    #pvpOverlay img{
+      width:88px;height:88px;object-fit:cover;border-radius:12px;
+      border:1px solid var(--panel-stroke-2);
+      background:rgba(0,94,184,.03);
+      box-shadow: 0 10px 18px rgba(11,31,51,.10);
+    }
+    #pvpText{color:var(--text-sub);font-size:12.5px;line-height:1.35; flex:1 1 auto;}
+    #pvpTitle{font-weight:900;margin-bottom:2px;color:var(--text-navy);}
+    #hint{opacity:.9;color:var(--text-sub);}
+
+    #pvpConfirm{
+      color:#ffffff;
+      font-weight:900;
+      opacity:1;
+      cursor:pointer;
+      user-select:none;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid rgba(0,94,184,.65);
+      background:var(--acuvue-blue);
+      backdrop-filter: blur(8px);
+      -webkit-tap-highlight-color: transparent;
+      flex:0 0 auto;
+      white-space:nowrap;
+      display:none;
+      box-shadow: 0 10px 22px rgba(0,94,184,.22);
+    }
+    #pvpConfirm:active{ transform:scale(.98); }
+
+    /* 두께 그래프(가로형) (고급 분리) */
+    #thicknessBar{
+      position:fixed;
+      left:12px;
+      right:12px;
+      bottom:92px;
+      z-index:67;
+      display:none;
+      border-radius:14px;
+      border:1px solid var(--panel-stroke);
+      background: var(--panel-grad);
+      backdrop-filter: blur(12px);
+      padding:10px 12px 12px;
+      box-sizing:border-box;
+      box-shadow: var(--panel-glow);
+      overflow:hidden;
+    }
+    #thicknessBar::before{
+      content:"";
+      position:absolute;
+      left:0; right:0; top:0;
+      height:2px;
+      background: var(--panel-topline);
+      opacity:.95;
+      pointer-events:none;
+    }
+    #thicknessBar::after{
+      content:"";
+      position:absolute; inset:0;
+      border-radius:14px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.45);
+      pointer-events:none;
+      opacity:.55;
+    }
+    #thicknessBar.show{ display:block; }
+
+    #thHeader{
+      display:flex;
+      align-items:baseline;
+      justify-content:space-between;
+      margin-bottom:8px;
+    }
+    #thTitle{
+      color:var(--text-navy);
+      font-weight:900;
+      font-size:12.5px;
+      letter-spacing:.2px;
+      opacity:.98;
+    }
+    #thUnit{
+      color:rgba(48,72,95,.85);
+      font-size:11px;
+      font-weight:700;
+      letter-spacing:.1px;
+    }
+
+    #gradRow{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .tickLabel{
+      width:46px;
+      text-align:right;
+      color:rgba(48,72,95,.86);
+      font-size:11px;
+      font-weight:700;
+      letter-spacing:.1px;
+      flex:0 0 auto;
+    }
+
+    #gradWrap{
+      position:relative;
+      flex:1 1 auto;
+      height:14px;
+      border-radius:999px;
+      overflow:hidden;
+      border:1px solid rgba(11,31,51,.12);
+      background:rgba(0,94,184,.03);
+      box-shadow: inset 0 0 12px rgba(11,31,51,.10);
+    }
+
+    #grad{
+      position:absolute; inset:0;
+      background:linear-gradient(90deg,
+        rgba(140,  0,255,1) 0%,
+        rgba(  0, 90,255,1) 17%,
+        rgba(  0,200,255,1) 32%,
+        rgba(  0,255,150,1) 48%,
+        rgba(150,255,  0,1) 64%,
+        rgba(255,220,  0,1) 78%,
+        rgba(255,120,  0,1) 90%,
+        rgba(255, 50, 50,1) 100%
+      );
+      opacity:.92;
+      filter:saturate(1.05) contrast(1.05);
+    }
+
+    #gradShine{
+      position:absolute; inset:0;
+      background:linear-gradient(180deg,
+        rgba(255,255,255,.30) 0%,
+        rgba(255,255,255,0) 55%,
+        rgba(11,31,51,.10) 100%
+      );
+      mix-blend-mode: overlay;
+      opacity:.55;
+      pointer-events:none;
+    }
+
+    .mark{
+      position:absolute;
+      top:-6px;
+      width:1px;
+      height:26px;
+      background:rgba(11,31,51,.18);
+    }
+    .mark strong{
+      position:absolute;
+      top:18px;
+      left:50%;
+      transform:translateX(-50%);
+      font-size:10px;
+      color:rgba(48,72,95,.80);
+      font-weight:700;
+      white-space:nowrap;
+    }
+    .m0{ left:0%; }
+    .m25{ left:25%; }
+    .m50{ left:50%; }
+    .m75{ left:75%; }
+    .m100{ left:100%; }
+
+    #thHint{ display:none; }
+  </style>
+</head>
+
+<body>
+  <!-- ✅ 미션 카드 -->
+  <div id="missionBar">
+    <div id="missionASD" class="missionCard" role="button" tabindex="0" aria-label="ASD 기술 보기">
+      <div class="missionNo">01</div>
+      <div class="missionTitle">ASD 기술</div>
+      <div class="missionDesc">카드를 눌러 확인</div>
+    </div>
+    <div id="missionPVP" class="missionCard" role="button" tabindex="0" aria-label="PVP 보기">
+      <div class="missionNo">02</div>
+      <div class="missionTitle">눈물 안정화</div>
+      <div class="missionDesc">카드를 눌러 확인</div>
+    </div>
+    <div id="missionBlue" class="missionCard" role="button" tabindex="0" aria-label="옵티블루 보기">
+      <div class="missionNo">03</div>
+      <div class="missionTitle">옵티블루 기술</div>
+      <div class="missionDesc">카드를 눌러 확인</div>
+    </div>
+  </div>
+
+  <!-- ✅ OFF일 때 렌즈 뒤쪽 그라데이션 번짐 -->
+  <div id="blueBackGlow" aria-hidden="true"></div>
+
+  <!-- ✅ 광선 레이어 -->
+
+  <!-- ✅ 출사광(beamOut) 전용: 렌즈 뒤(뒤 레이어) -->
+  <div id="blueRayLayerBack" aria-hidden="true">
+    <svg id="blueRaySvgBack" viewBox="0 0 100 100" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="beamOutGradBack" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0"    stop-color="rgb(255,191,0)" stop-opacity="0.22"></stop>
+          <stop offset="0.35" stop-color="rgb(255,191,0)" stop-opacity="1"></stop>
+          <stop offset="0.75" stop-color="rgb(255,191,0)" stop-opacity="0.50"></stop>
+          <stop offset="1"    stop-color="rgb(255,191,0)" stop-opacity="0"></stop>
+        </linearGradient>
+        <filter id="beamGlowBack" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="0.9" result="blur"/>
+          <feMerge>
+            <feMergeNode in="blur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+      </defs>
+
+      <line id="beamOutBack" x1="50" y1="50" x2="100" y2="50"
+            stroke="url(#beamOutGradBack)"
+            stroke-width="3.00"
+            stroke-linecap="round"
+            filter="url(#beamGlowBack)"
+            opacity="0.0"></line>
+    </svg>
+  </div>
+
+<div id="blueRayLayer" aria-hidden="true">
+  <svg id="blueRaySvg" viewBox="0 0 100 100" preserveAspectRatio="none">
+    <defs>
+
+      <!-- 🔶 beamIn : 진노랑 -->
+      <linearGradient id="beamInGrad" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0"    stop-color="rgb(255,170,0)" stop-opacity="0"></stop>
+        <stop offset="0.28" stop-color="rgb(255,170,0)" stop-opacity="0.55"></stop>
+        <stop offset="0.55" stop-color="rgb(255,170,0)" stop-opacity="1"></stop>
+        <stop offset="1"    stop-color="rgb(255,170,0)" stop-opacity="0.18"></stop>
+      </linearGradient>
+
+      <!-- 🔶 beamOut : 노랑(연) -->
+      <linearGradient id="beamOutGrad" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0"    stop-color="rgb(255,205,70)" stop-opacity="0.10"></stop>
+        <stop offset="0.30" stop-color="rgb(255,205,70)" stop-opacity="0.75"></stop>
+        <stop offset="0.55" stop-color="rgb(255,205,70)" stop-opacity="1"></stop>
+        <stop offset="1"    stop-color="rgb(255,205,70)" stop-opacity="0"></stop>
+      </linearGradient>
+
+      <!-- ✅ beamBend(반사광) : 파란색 유지 -->
+      <linearGradient id="beamReflectGrad" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0"    stop-color="rgb(0,94,184)" stop-opacity="0.15"></stop>
+        <stop offset="0.30" stop-color="rgb(0,94,184)" stop-opacity="0.80"></stop>
+        <stop offset="0.55" stop-color="rgb(0,94,184)" stop-opacity="1"></stop>
+        <stop offset="1"    stop-color="rgb(0,94,184)" stop-opacity="0"></stop>
+      </linearGradient>
+
+      <filter id="beamGlow" x="-60%" y="-60%" width="220%" height="220%">
+        <feGaussianBlur stdDeviation="1.15" result="blur"/>
+        <feMerge>
+          <feMergeNode in="blur"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+
+      <!-- ✅ 작은 '->' 느낌 화살표 (출사광/반사광) -->
+      <marker id="beamArrowBlueSmall" viewBox="0 0 12 10" refX="10.2" refY="5"
+              markerWidth="0.9" markerHeight="0.9" orient="auto">
+        <path d="M 0 1 L 11 5 L 0 9"
+              fill="none"
+              stroke="rgb(0,94,184)"
+              stroke-width="2.0"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              opacity="0.95"></path>
+      </marker>
+
+      <marker id="beamArrowYellowSmall" viewBox="0 0 12 10" refX="10.2" refY="5"
+              markerWidth="0.9" markerHeight="0.9" orient="auto">
+        <path d="M 0 1 L 11 5 L 0 9"
+              fill="none"
+              stroke="rgb(255,190,40)"
+              stroke-width="2.0"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              opacity="0.95"></path>
+      </marker>
+
+      <!-- ✅ 렌즈를 지나는 구간(출사광) 가리기용 마스크 -->
+      <mask id="lensOccludeMask">
+        <rect x="0" y="0" width="100" height="100" fill="white"></rect>
+        <!-- JS에서 위치/크기 갱신 -->
+        <ellipse id="lensOccludeEllipse" cx="56" cy="52" rx="26" ry="30" fill="black"></ellipse>
+      </mask>
+
+    </defs>
+
+    <line id="beamIn" x1="0" y1="50" x2="50" y2="50"
+          stroke="url(#beamInGrad)"
+          stroke-width="3.4"
+          stroke-linecap="round"
+          filter="url(#beamGlow)"
+          opacity="0.0"></line>
+
+    <line id="beamOutFront" x1="50" y1="50" x2="100" y2="50"
+          stroke="url(#beamOutGrad)"
+          stroke-width="3.4"
+          stroke-linecap="round"
+          marker-end="url(#beamArrowYellowSmall)"
+          mask="url(#lensOccludeMask)"
+          filter="url(#beamGlow)"
+          opacity="0.0"></line>
+
+    <line id="beamBend" x1="50" y1="50" x2="25" y2="70"
+          stroke="url(#beamReflectGrad)"
+          stroke-width="3.6"
+          stroke-linecap="round"
+          marker-end="url(#beamArrowBlueSmall)"
+          filter="url(#beamGlow)"
+          opacity="0.0"></line>
+
+    <circle id="beamHit"
+            cx="50"
+            cy="50"
+            r="1.6"
+            fill="rgb(255,255,255)"
+            fill-opacity="0.80"
+            filter="url(#beamGlow)"
+            opacity="0.0"></circle>
+
+  </svg>
+</div>
+
+  <!-- ✅ 출사광(beamOut) 전용: 렌즈 뒤 레이어 -->
+  <div id="blueRayBehind" aria-hidden="true">
+    <svg id="blueRaySvgBack" viewBox="0 0 100 100" preserveAspectRatio="none">
+      <line id="beamOutFront" x1="50" y1="50" x2="100" y2="50"
+            stroke="url(#beamOutGrad)"
+            stroke-width="2.00"
+            stroke-linecap="round"
+            filter="url(#beamGlow)"
+            opacity="0.0"></line>
+    </svg>
+  </div>
+
+
+
+  <div id="bluePill" aria-label="블루라이트 차단 선택">
+    <div id="blueSegOn" class="blueSegBtn">블루라이트 차단 ON</div>
+    <div id="blueSegOff" class="blueSegBtn">OFF</div>
+  </div>
+
+  <div id="blueInfo" aria-hidden="true">
+    <div id="blueInfoTop">
+      <b>블루라이트 <span class="pct">55%</span> 차단</b>
+    </div>
+    <div id="blueInfoBody">
+      아큐브 MAX는,
+      블루라이트를 55% 차단하여 디지털에 노출된 눈을 보호합니다.
+      블루라이트 차단을 위한 "블루 그린 틴트"를 확인해주세요.
+    </div>
+    <div id="blueInfoMission">
+      <div class="left" id="blueMissionText">미션: "블루라이트 차단 on" 버튼을 눌러 차이를 비교해 보세요</div>
+      <div class="confirm" id="blueMissionConfirm">확인</div>
+    </div>
+  </div>
+
+  <div id="thicknessBar" aria-hidden="true">
+    <div id="thHeader">
+      <div id="thTitle">두께</div>
+      <div id="thUnit">mm</div>
+    </div>
+    <div id="gradRow">
+      <div class="tickLabel">얇음_0.0</div>
+      <div id="gradWrap">
+        <div id="grad"></div>
+        <div id="gradShine"></div>
+        <div class="mark m0"><strong>0.0</strong></div>
+        <div class="mark m25"><strong>0.1</strong></div>
+        <div class="mark m50"><strong>0.2</strong></div>
+        <div class="mark m75"><strong>0.3</strong></div>
+        <div class="mark m100"><strong>0.4</strong></div>
+      </div>
+      <div class="tickLabel" style="text-align:left;width:46px;">0.4_두껍</div>
+    </div>
+    <div id="thHint"></div>
+  </div>
+
+  <div id="pvpBig">
+    <img id="pvpBigImg" src="PVP.gif" alt="PVP Big" onerror="this.onerror=null; this.src='PVP.jpeg';">
+  </div>
+
+  <div id="pvpOverlay">
+    <img id="pvpThumb" src="PVP.png" alt="PVP" onerror="this.onerror=null; this.src='PVP.jpeg';">
+    <div id="pvpText">
+      <div id="pvpTitle">PVP 습윤 인자</div>
+      <div id="hint">렌즈 내 PVP 습윤인자가 수분을 더 오랫동안 눈물막 유지하여 건조감을 감소 시킵니다.</div>
+    </div>
+    <div id="pvpConfirm" role="button" tabindex="0" aria-label="확인">확인</div>
+  </div>
+
+  <div id="asdOverlay" aria-hidden="true">
+    <div id="asdCard">
+      <button id="asdClose" type="button" aria-label="닫기">✕</button>
+      <div id="asdScene">
+        <img id="asdEyeMV" src="a.png" alt="Eye background" onerror="this.onerror=null; this.src='a.gif';">
+        <div id="asdLensRim" aria-hidden="true"></div>
+        <img id="asdLensImg" src="lens.png" alt="Lens overlay"
+             onerror="this.style.display='none'; document.getElementById('asdHint').textContent='lens.png / lens2.png 파일을 같은 폴더에 넣어주세요.';">
+        <div id="asdMaskShade" aria-hidden="true"></div>
+                <img id="asdUpperLid" src="upper_lid.png" alt="Upper eyelid overlay" onerror="this.style.display='none';">
+
+        <div id="asdBlinkLid" aria-hidden="true">
+          <div id="asdLidTop"></div>
+          <div id="asdLidBot"></div>
+        </div>
+
+        <div id="asdAngleBadge">20°</div>
+        <button id="asdRotateBtn" type="button" aria-label="회전">축이탈</button>
+        <button id="asdBlinkBtn" type="button" aria-label="눈 깜박">깜박임</button>
+      </div>
+      <div id="asdHint">아큐브 ASD는 자연스로운 눈 깜박임을 통해 빠르고 정확하게 축 안정화를 합니다.  미션: ‘깜박임’ 버튼을 눌러 이탈된 축을 안정화 시켜주세요</div>
+    </div>
+  </div>
+
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <script nomodule src="https://unpkg.com/@google/model-viewer/dist/model-viewer-legacy.js"></script>
+
+  <model-viewer
+    id="mv"
+    src="lens_clear.glb"
+    camera-controls
+    camera-orbit="0deg 100deg 2.6m"
+    camera-target="0m 0.015m 0m"
+    touch-action="pan-y"
+    exposure="1.35"
+    tone-mapping="aces"
+    environment-image="neutral"
+    shadow-intensity="0"
+    style="display:block;">
+  </model-viewer>
+
+  <div id="bottomBtns">
+    <button id="btnReset" title="처음 위치로">↺</button>
+    <button id="modeLens" class="btn primary">투명 렌즈 모드</button>
+    <button id="modeHeat" class="btn">렌즈 두께 MAP</button>
+  </div>
+
+  <script>
+    const mv = document.getElementById('mv');
+
+    /* =========================
+       ✅ 터치하면 멈추는 현상 방지 (이 블록만 추가)
+       - iOS/일부 브라우저에서 GLB 애니메이션/렌더가 터치 후 pause 되는 케이스 대응
+       - 다른 로직/구조는 변경하지 않음
+       ========================= */
+    function keepMVPlaying(){
+      try{
+        if(!mv) return;
+        if(mv.paused) mv.play();
+      }catch(e){}
+    }
+    if(mv){
+      ['pointerdown','pointermove','pointerup','touchstart','touchend','mousedown','mouseup'].forEach((ev)=>{
+        try{ mv.addEventListener(ev, keepMVPlaying, { passive:true }); }catch(e){}
+      });
+    }
+    document.addEventListener('visibilitychange', ()=>{
+      if(!document.hidden) setTimeout(keepMVPlaying, 60);
+    });
+    /* ========================= */
+
+    const missionASD  = document.getElementById('missionASD');
+    const missionPVP  = document.getElementById('missionPVP');
+    const missionBlue = document.getElementById('missionBlue');
+
+    const modeLens = document.getElementById('modeLens');
+    const modeHeat = document.getElementById('modeHeat');
+
+    const btnReset = document.getElementById('btnReset');
+
+    const asdOverlay = document.getElementById('asdOverlay');
+    const asdClose   = document.getElementById('asdClose');
+
+    const pvpOverlay = document.getElementById('pvpOverlay');
+    const pvpBig     = document.getElementById('pvpBig');
+    const pvpConfirm = document.getElementById('pvpConfirm');
+
+    const thicknessBar = document.getElementById('thicknessBar');
+
+    const bluePill = document.getElementById('bluePill');
+    const blueSegOn  = document.getElementById('blueSegOn');
+    const blueSegOff = document.getElementById('blueSegOff');
+    const blueRayLayer = document.getElementById('blueRayLayer');
+    const blueRayLayerBack = document.getElementById('blueRayLayerBack');
+    const blueRayBehind = document.getElementById('blueRayBehind');
+    const blueBackGlow = document.getElementById('blueBackGlow');
+    const blueInfo = document.getElementById('blueInfo');
+    const blueMissionText = document.getElementById('blueMissionText');
+    const blueMissionConfirm = document.getElementById('blueMissionConfirm');
+
+    const beamIn  = document.getElementById('beamIn');
+    const beamOut = document.getElementById('beamOutBack');
+    const beamOutFront = document.getElementById('beamOutFront');
+    const beamBend = document.getElementById('beamBend');
+    const beamHit = document.getElementById('beamHit');
+
+    const lensOccludeEllipse = document.getElementById('lensOccludeEllipse');
+
+
+    /* =========================
+       ✅ [추가] iOS Safari에서 SVG gradient/filter 라인이 '안 보이는' 케이스 최후 방어
+       - 로직은 그대로, 렌더링 문제일 때만 '렌더 친화' 속성으로 보정
+       ========================= */
+    const __isIOS = (()=> {
+      const ua = navigator.userAgent || '';
+      const platform = navigator.platform || '';
+      const iOS = /iP(hone|od|ad)/.test(platform);
+      const iPadOS13Plus = (platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      return iOS || iPadOS13Plus;
+    })();
+    const __isSafari = /^((?!chrome|crios|android).)*safari/i.test(navigator.userAgent || '');
+    const __isSafariIOS = __isIOS && __isSafari;
+
+    function __forceSvgRedraw(){
+      try{
+        const layer = document.getElementById('blueRayLayer');
+        const svg = document.getElementById('blueRaySvg');
+        if(!layer || !svg) return;
+
+        // display:none -> block 전환 직후 Safari가 paint를 스킵하는 케이스 방지
+        svg.style.transform = 'translateZ(0)';
+        const prev = svg.style.display || 'block';
+        svg.style.display = 'none';
+        // 강제 reflow
+        void svg.getBoundingClientRect();
+        svg.style.display = prev;
+
+        // line bbox 계산 강제 (일부 Safari에서 효과 있음)
+        try{ svg.getBBox(); }catch(e){}
+      }catch(e){}
+    }
+
+    function __patchBeamsForSafari(){
+      if(!__isSafariIOS) return;
+      // gradient + filter 조합이 안 보이는 케이스가 있어, beamIn/Out만 최소 보정
+      [beamIn, beamOut].forEach(el=>{
+        if(!el) return;
+        try{ el.setAttribute('filter','none'); }catch(e){}
+        try{ el.style.filter = 'none'; }catch(e){}
+        // gradient가 paint를 못할 때를 대비한 fallback: solid stroke
+        try{ el.setAttribute('stroke','rgb(255,191,0)'); }catch(e){}
+        try{ el.style.stroke = 'rgb(255,191,0)'; }catch(e){}
+        try{ el.setAttribute('shape-rendering','geometricPrecision'); }catch(e){}
+        try{ el.setAttribute('vector-effect','non-scaling-stroke'); }catch(e){}
+      });
+      [beamBend].forEach(el=>{
+        if(!el) return;
+        try{ el.setAttribute('shape-rendering','geometricPrecision'); }catch(e){}
+        try{ el.setAttribute('vector-effect','non-scaling-stroke'); }catch(e){}
+      });
+    }
+    /* ========================= */
+
+
+    const asdEyeMV = document.getElementById('asdEyeMV');
+    const asdLensImg = document.getElementById('asdLensImg');
+    const asdBlinkBtn = document.getElementById('asdBlinkBtn');
+    const asdRotateBtn = document.getElementById('asdRotateBtn');
+    const asdAngleBadge = document.getElementById('asdAngleBadge');
+    const asdLensRim = document.getElementById('asdLensRim');
+    const asdHint = document.getElementById('asdHint');
+
+    const asdLidTop = document.getElementById('asdLidTop');
+    const asdLidBot = document.getElementById('asdLidBot');
+
+    let currentMode = 'lens';
+    let blueOn = false;
+    let pvpOn = false;
+    let pvpDone = false;
+    let bluePanelOpen = false;
+
+    let lastOrbit = null;
+    let lastTarget = null;
+
+    let defaultOrbit = null;
+    let defaultTarget = null;
+    let defaultFov = null;
+
+    const BLUE_PANEL_ORBIT_STR  = '55deg 99deg 2.9m';
+    const BLUE_PANEL_TARGET_STR = '0m -0.010m 0m';
+
+    const BLUE_ORBIT_STR  = '-20deg 88deg 2.75m';
+    const BLUE_TARGET_STR = '0m -0.010m 0m';
+
+    const CLEAR_DEFAULT_ORBIT_STR  = '0deg 100deg 2.6m';
+    const CLEAR_DEFAULT_TARGET_STR = '0m 0.015m 0m';
+
+    const HEAT_DEFAULT_ORBIT_STR  = '0deg 100deg 2.6m';
+    const HEAT_DEFAULT_TARGET_STR = '0m 0.015m 0m';
+
+    let pendingCameraPreset = null;
+
+    let orbitBeforeBlue = null;
+    let targetBeforeBlue = null;
+
+    const BLUEGREEN_TINT = [0.55, 1.08, 0.72, 0.45];
+    let allMaterialBackup = null;
+
+    const blueMission = {
+      successShown: false,
+      confirmed: false,
+      sawOn: false,
+      sawOff: false
+    };
+
+    let beamAnimToken = 0;
+    let beamGeom = null;
+
+    /* =========================
+       ✅ 빔 애니메이션(모바일/iOS 안전)
+       - stroke-dash 사용 없이, 라인을 "그려지는" 방식으로 애니메이션
+       - OFF: 입사광 → 출사광 (순차)
+       - ON : 입사광 → (출사광 + 반사광 동시 분기) + 중앙 히트 점
+       ========================= */
+    function setLineFull(el, g){
+      if(!el || !g) return;
+      el.setAttribute('x1', g.x1); el.setAttribute('y1', g.y1);
+      el.setAttribute('x2', g.x2); el.setAttribute('y2', g.y2);
+    }
+    function setLineProgress(el, g, t){
+      if(!el || !g) return;
+      const tt = Math.max(0, Math.min(1, t));
+      const x2 = g.x1 + (g.x2 - g.x1) * tt;
+      const y2 = g.y1 + (g.y2 - g.y1) * tt;
+      el.setAttribute('x1', g.x1); el.setAttribute('y1', g.y1);
+      el.setAttribute('x2', x2);   el.setAttribute('y2', y2);
+    }
+    function animateDraw(el, g, ms, delay=0, token=0){
+      if(!el || !g) return;
+      const startAt = performance.now() + delay;
+      const endAt = startAt + ms;
+
+      // 시작은 안그려진 상태
+      setLineProgress(el, g, 0);
+      el.style.opacity = '';
+      el.setAttribute('opacity', el.getAttribute('opacity') || '1');
+
+      const tick = (now)=>{
+        if(token !== beamAnimToken) return; // 중간에 취소된 경우
+        if(now < startAt){ requestAnimationFrame(tick); return; }
+        const t = (now - startAt) / ms;
+        if(t >= 1){
+          setLineFull(el, g);
+          return;
+        }
+        setLineProgress(el, g, t);
+        requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    }
+
+    function playBeamAnimation(){
+      beamAnimToken++;
+      const token = beamAnimToken;
+
+      // 좌표 최신화
+      if(!beamGeom) updateBeams();
+
+      // 상태별 기본 가시성
+      syncBeamVisibility();
+
+      // OFF: 입사 → 출사
+      if(!blueOn){
+        beamHit.setAttribute('opacity','0');
+        beamBend.setAttribute('opacity','0');
+
+        // 입사광 그리기
+        animateDraw(beamIn, beamGeom?.in, 180, 0, token);
+        // 출사광 그리기(뒤쪽, 렌즈 구간 마스크)
+        animateDraw(beamOut, beamGeom?.out, 220, 140, token);
+        return;
+      }
+
+      // ON: 입사 → (출사+반사) 동시
+      beamHit.setAttribute('opacity','0.92');
+
+      animateDraw(beamIn, beamGeom?.in, 180, 0, token);
+      animateDraw(beamOut, beamGeom?.out, 220, 120, token);
+      animateDraw(beamBend, beamGeom?.bend, 220, 120, token);
+    }
+    /* ========================= */
+
+    function setBlueUI(){
+      const visible = (bluePanelOpen && currentMode === 'lens');
+
+      bluePill.style.display = visible ? 'flex' : 'none';
+      blueInfo.style.display = visible ? 'block' : 'none';
+      blueInfo.setAttribute('aria-hidden', visible ? 'false' : 'true');
+
+      blueRayLayer.style.display = visible ? 'block' : 'none';
+      blueRayLayerBack.style.display = visible ? 'block' : 'none';
+      if(blueRayBehind) blueRayBehind.style.display = visible ? 'block' : 'none';
+      blueBackGlow.style.display = (visible && !blueOn) ? 'block' : 'none';
+
+      blueSegOn.classList.toggle('on', blueOn === true);
+      blueSegOff.classList.toggle('on', blueOn === false);
+
+      if(blueMission.successShown && !blueMission.confirmed){
+        blueMissionText.textContent = '미션 성공: 확인 버튼을 눌러주세요';
+        blueMissionConfirm.style.display = 'block';
+      }else{
+        blueMissionText.textContent = '미션: "블루라이트 차단 on" 버튼을 눌러 차이를 비교해 보세요';
+        blueMissionConfirm.style.display = 'none';
+      }
+
+      syncBeamVisibility();
+      if(visible){
+        __patchBeamsForSafari();
+        __forceSvgRedraw();
+        updateBeams();
+        playBeamAnimation();
+      }
+    }
+
+    function syncBeamVisibility(){
+      const visible = (bluePanelOpen && currentMode === 'lens');
+      if(!visible){
+        beamIn.setAttribute('opacity','0');
+        beamOut.setAttribute('opacity','0');
+        if(beamOutFront) beamOutFront.setAttribute('opacity','0');
+        beamBend.setAttribute('opacity','0');
+        beamHit.setAttribute('opacity','0');
+        return;
+      }
+
+      if(!blueOn){
+        beamIn.setAttribute('opacity','0.95');
+        beamOut.setAttribute('opacity','0.95');
+        if(beamOutFront) beamOutFront.setAttribute('opacity','0');
+        beamBend.setAttribute('opacity','0');
+        beamHit.setAttribute('opacity','0');
+        return;
+      }
+
+      beamIn.setAttribute('opacity','0.95');
+      beamOut.setAttribute('opacity','0.50');
+      if(beamOutFront) beamOutFront.setAttribute('opacity','0');
+      beamBend.setAttribute('opacity','0.55');
+      beamHit.setAttribute('opacity','0.90');
+    }
+
+ 
+function updateBeams(){
+  const visible = (bluePanelOpen && currentMode === 'lens');
+  if(!visible) return;
+
+  const rect = mv.getBoundingClientRect();
+
+  const toVw = (x)=> (x / window.innerWidth) * 100;
+  const toVh = (y)=> (y / window.innerHeight) * 100;
+
+  // ✅ iOS Safari에서 viewBox 밖으로 크게 나가면 line이 통째로 안 그려지는 케이스 방지
+  const clamp = (v, min, max)=> Math.max(min, Math.min(max, v));
+
+  // =========================
+  // ✅ 렌즈 중심(화면상) 계산
+  // - model-viewer의 bounding rect 비율 기반(카메라/회전/드래그에도 자연스럽게 따라감)
+  // =========================
+  const lensCx = clamp(toVw(rect.left + rect.width  * 0.35), 0, 100);
+  const lensCy = clamp(toVh(rect.top  + rect.height * 0.35), 0, 100);
+  const rx = clamp((rect.width  / window.innerWidth)  * 100 * 0.24, 8, 40);
+  const ry = clamp((rect.height / window.innerHeight) * 100 * 0.28, 10, 45);
+
+  // =========================
+  // ✅ 원하는 입사각: 수평 기준 약 165° 느낌(=약 15° 기울기)
+  // - hit(흰 점) 위치를 렌즈 "표면(타원 경계)"에 고정
+  // - 입사/출사/반사 모두 이 hit를 기준으로 계산
+  // =========================
+  const m = Math.tan((15 * Math.PI) / 180); // 15°
+
+  // ✅ line: (lensCx, lensCy) 를 지나며 기울기 m 인 직선과
+  //    ellipse: ((x-lensCx)/rx)^2 + ((y-lensCy)/ry)^2 = 1 의 교점
+  //    -> 좌측(입사) 표면 교점을 hit 로 사용
+    // ✅ 히트 포인트를 렌즈 중심(시각적 중심)에 고정
+  // - 렌즈 오빗/움직임에도 항상 렌즈 중심을 기준으로 따라오도록
+  const hx = lensCx;
+  const hy = lensCy;
+
+  // 입사광 시작점(왼쪽 경계 x=0) : 같은 직선 연장
+  const inX1 = 0;
+  const inY1 = clamp(hy - (m * hx), 0, 100);
+
+  // 출사광 끝점(오른쪽 경계 x=100) : 같은 직선 연장(꺾임 없음)
+  const outX2 = 100;
+  const outY2 = clamp(hy + (m * (outX2 - hx)), 0, 100);
+
+  // -------------------------
+  // ✅ 입사광(beamIn): (0,inY1) -> (hx,hy)
+  // -------------------------
+  beamIn.setAttribute('x1', inX1);
+  beamIn.setAttribute('y1', inY1);
+  beamIn.setAttribute('x2', hx);
+  beamIn.setAttribute('y2', hy);
+
+  // -------------------------
+  // ✅ 출사광(beamOut): (hx,hy) -> (100,outY2)  (꺾임 없음)
+  // -------------------------
+  beamOut.setAttribute('x1', hx);
+  beamOut.setAttribute('y1', hy);
+  beamOut.setAttribute('x2', outX2);
+  beamOut.setAttribute('y2', outY2);
+
+  // -------------------------
+  // ✅ 반사광(beamBend): (hx,hy) -> 위로 튀는 모습(파란색)
+  // - 길이는 기존 비율 유지하되, 렌즈 중심 기준으로 자연스럽게 따라감
+  // -------------------------
+  const bendX2 = clamp(hx - rx * 0.55, 0, 100);
+  const bendY2 = clamp(hy - ry * 0.95, 18, 100);
+
+  beamBend.setAttribute('x1', hx);
+  beamBend.setAttribute('y1', hy);
+  beamBend.setAttribute('x2', bendX2);
+  beamBend.setAttribute('y2', bendY2);
+
+  // 중앙 히트 포인트(흰 점)
+  beamHit.setAttribute('cx', hx);
+  beamHit.setAttribute('cy', hy);
+
+  // -------------------------
+  // ✅ 출사광이 렌즈를 "지나는 구간"이 앞에서 안보이게: 마스크(타원) 위치 갱신
+  // - 렌즈 중심/크기 동일 값 사용(카메라 움직여도 함께 추적)
+  // -------------------------
+  if(lensOccludeEllipse){
+    lensOccludeEllipse.setAttribute('cx', lensCx);
+    lensOccludeEllipse.setAttribute('cy', lensCy);
+    lensOccludeEllipse.setAttribute('rx', rx);
+    lensOccludeEllipse.setAttribute('ry', ry);
+  }
+
+  // 애니메이션용 좌표 저장
+  beamGeom = {
+    in:  { x1: inX1, y1: inY1, x2: hx,    y2: hy },
+    out: { x1: hx,   y1: hy,   x2: outX2, y2: outY2 },
+    bend:{ x1: hx,   y1: hy,   x2: bendX2,y2: bendY2 }
+  };
+}
+
+
+mv.addEventListener('camera-change', ()=>{
+      if(bluePanelOpen && currentMode === 'lens') updateBeams();
+    });
+    window.addEventListener('resize', ()=>{
+      if(bluePanelOpen && currentMode === 'lens') updateBeams();
+    });
+
+    let asdAngle = 20;
+    const ASD_STEP = 5;
+    const ASD_START = 20;
+    let asdLastDir = -1;
+    let asdDone = false;
+
+    function setASDHintDefault(){
+      if(!asdHint) return;
+      asdHint.innerHTML = '아큐브 ASD는 자연스로운 눈 깜박임을 통해 빠르고 정확하게 축 안정화를 합니다.  미션: ‘깜박임’ 버튼을 눌러 이탈된 축을 안정화 시켜주세요';
+    }
+    function setASDHintSuccess(){
+      if(!asdHint) return;
+      asdHint.innerHTML = `
+        <span>미션성공 : 축이 안정화되었습니다. 확인 버튼을 눌러주세요</span>
+        <button id="asdConfirmBtn" type="button" aria-label="확인">확인</button>
+      `;
+      const btn = document.getElementById('asdConfirmBtn');
+      if(btn){
+        btn.addEventListener('click', (e)=>{
+          e.stopPropagation();
+          closeASD();
+          markASDDone(true);
+        });
+      }
+    }
+    function markASDDone(done){
+      asdDone = !!done;
+      missionASD.classList.toggle('done', asdDone);
+    }
+    function pickASDLensSrc(){
+      return (currentMode === 'heat') ? 'lens2.png' : 'lens.png';
+    }
+    function setASDLensSrc(){
+      if(!asdLensImg) return;
+      const src = pickASDLensSrc();
+      asdLensImg.src = src + '?v=' + Date.now();
+    }
+    function renderASDLensTransform(extraX=0){
+      if(!asdLensImg) return;
+      asdLensImg.style.transform =
+        `translate(calc(-50% + ${extraX}px + var(--irisX, 0px)), calc(-50% + var(--irisY, 0px))) rotate(${asdAngle}deg)`;
+      if(asdAngleBadge){
+        if(asdAngle > 0) asdAngleBadge.textContent = `좌측으로 ${asdAngle}° 회전`;
+        else if(asdAngle < 0) asdAngleBadge.textContent = `우측으로 ${Math.abs(asdAngle)}° 회전`;
+        else asdAngleBadge.textContent = `축 안정`;
+      }
+    }
+    function resetASDState(){
+      asdAngle = ASD_START;
+      asdLastDir = -1;
+      renderASDLensTransform(0);
+    }
+
+    let asdBlinkBusy = false;
+    function playBlinkLid(){
+      if(asdBlinkBusy) return;
+      asdBlinkBusy = true;
+
+      const hideLens = ()=>{
+        if(asdLensImg) asdLensImg.style.opacity = '0';
+        if(asdLensRim) asdLensRim.style.opacity = '0';
+      };
+      const showLens = ()=>{
+        if(asdLensImg) asdLensImg.style.opacity = '';
+        if(asdLensRim) asdLensRim.style.opacity = '';
+      };
+
+      if(!asdLidTop || !asdLidBot) {
+        hideLens();
+        setTimeout(()=>{ showLens(); asdBlinkBusy = false; }, 220);
+        return;
+      }
+
+      asdLidTop.style.transition = 'none';
+      asdLidBot.style.transition = 'none';
+      asdLidTop.style.opacity = '0';
+      asdLidBot.style.opacity = '0';
+      asdLidTop.style.transform = 'translateY(-110%)';
+      asdLidBot.style.transform = 'translateY(110%)';
+
+      requestAnimationFrame(()=>{
+        asdLidTop.style.transition = 'transform 120ms ease, opacity 120ms ease';
+        asdLidBot.style.transition = 'transform 120ms ease, opacity 120ms ease';
+        asdLidTop.style.opacity = '1';
+        asdLidBot.style.opacity = '1';
+        asdLidTop.style.transform = 'translateY(0%)';
+        asdLidBot.style.transform = 'translateY(0%)';
+
+        setTimeout(hideLens, 55);
+
+        setTimeout(()=>{
+          asdLidTop.style.transition = 'transform 150ms ease, opacity 150ms ease';
+          asdLidBot.style.transition = 'transform 150ms ease, opacity 150ms ease';
+          asdLidTop.style.transform = 'translateY(-110%)';
+          asdLidBot.style.transform = 'translateY(110%)';
+          asdLidTop.style.opacity = '0';
+          asdLidBot.style.opacity = '0';
+        }, 140);
+
+        setTimeout(()=>{
+          showLens();
+          asdBlinkBusy = false;
+        }, 240);
+      });
+    }
+
+    function overshootAndReturn(){
+      const overshootDeg = asdLastDir * 3;
+      if(!asdLensImg) return;
+      asdLensImg.style.transition = 'transform 120ms ease';
+      asdAngle = overshootDeg;
+      renderASDLensTransform(0);
+      setTimeout(()=>{
+        asdLensImg.style.transition = 'transform 180ms ease';
+        asdAngle = 0;
+        renderASDLensTransform(0);
+        setTimeout(()=>{
+          if(asdLensImg) asdLensImg.style.transition = '';
+        }, 190);
+      }, 120);
+    }
+    function handleASDBlink(){
+      playBlinkLid();
+      if(asdAngle > 0){
+        asdLastDir = -1;
+        asdAngle = Math.max(0, asdAngle - ASD_STEP);
+        if(asdLensImg){
+          asdLensImg.style.transition = 'transform 160ms ease';
+          renderASDLensTransform(0);
+          setTimeout(()=>{ if(asdLensImg) asdLensImg.style.transition = ''; }, 170);
+        }else{
+          renderASDLensTransform(0);
+        }
+        if(asdAngle === 0 && !asdDone){
+          setASDHintSuccess();
+        }
+      }else if(asdAngle < 0){
+        asdLastDir = +1;
+        asdAngle = Math.min(0, asdAngle + ASD_STEP);
+        if(asdLensImg){
+          asdLensImg.style.transition = 'transform 160ms ease';
+          renderASDLensTransform(0);
+          setTimeout(()=>{ if(asdLensImg) asdLensImg.style.transition = ''; }, 170);
+        }else{
+          renderASDLensTransform(0);
+        }
+        if(asdAngle === 0 && !asdDone){
+          setASDHintSuccess();
+        }
+      }else{
+        overshootAndReturn();
+      }
+    }
+    if(asdBlinkBtn){
+      asdBlinkBtn.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        handleASDBlink();
+      });
+    }
+    function handleASDRotateRandom(){
+      markASDDone(false);
+      setASDHintDefault();
+      const mags = [10,15,20];
+      const mag = mags[Math.floor(Math.random() * mags.length)];
+      const dir = (Math.random() < 0.5) ? -1 : 1;
+      asdLastDir = dir;
+      asdAngle = dir * mag;
+      if(asdLensImg){
+        asdLensImg.style.transition = 'transform 180ms ease';
+        renderASDLensTransform(0);
+        setTimeout(()=>{ if(asdLensImg) asdLensImg.style.transition = ''; }, 190);
+      }else{
+        renderASDLensTransform(0);
+      }
+    }
+    if(asdRotateBtn){
+      asdRotateBtn.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        handleASDRotateRandom();
+      });
+    }
+
+    function getOrbitSafe(){ try{ return mv.getCameraOrbit(); }catch(e){ return null; } }
+    function getTargetSafe(){ try{ return mv.getCameraTarget(); }catch(e){ return null; } }
+    function applyOrbit(orbit){
+      if(!orbit) return;
+      try{ mv.cameraOrbit = `${orbit.theta}rad ${orbit.phi}rad ${orbit.radius}m`; }catch(e){}
+    }
+    function applyTarget(target){
+      if(!target) return;
+      try{ mv.cameraTarget = `${target.x}m ${target.y}m ${target.z}m`; }catch(e){}
+    }
+    function applyOrbitStr(s){ try{ mv.cameraOrbit = s; }catch(e){} }
+    function applyTargetStr(s){ try{ mv.cameraTarget = s; }catch(e){} }
+
+    function resetCameraToModeDefault(mode){
+      const orbitStr  = (mode === 'heat') ? HEAT_DEFAULT_ORBIT_STR  : CLEAR_DEFAULT_ORBIT_STR;
+      const targetStr = (mode === 'heat') ? HEAT_DEFAULT_TARGET_STR : CLEAR_DEFAULT_TARGET_STR;
+
+      const applyAll = ()=>{
+        applyTargetStr(targetStr);
+        applyOrbitStr(orbitStr);
+
+        try{
+          if(defaultFov) mv.fieldOfView = defaultFov;
+          else mv.fieldOfView = '45deg';
+        }catch(e){}
+
+        try{ mv.jumpCameraToGoal?.(); }catch(e){}
+      };
+
+      try{ mv.removeAttribute('camera-controls'); }catch(e){}
+
+      applyAll();
+
+      requestAnimationFrame(()=>{
+        try{ mv.setAttribute('camera-controls',''); }catch(e){}
+        applyAll();
+        setTimeout(applyAll, 120);
+        setTimeout(applyAll, 260);
+      });
+    }
+
+    function showPVP(show){
+      pvpOverlay.classList.toggle('show', show);
+      pvpBig.classList.toggle('show', show);
+      pvpConfirm.style.display = show ? 'block' : 'none';
+    }
+    function showThickness(show){
+      thicknessBar.classList.toggle('show', show);
+      thicknessBar.setAttribute('aria-hidden', show ? 'false' : 'true');
+    }
+
+    /* ✅ (요청) PVP 원형 이미지 + 렌즈 중앙 맞춤 & 살짝 더 확대 (기존 방식 유지: 카메라 줌) */
+    const PVP_ZOOM_FACTOR = 0.70;
+
+    function zoomInForPVP(){
+      try{
+        const orbit = getOrbitSafe();
+        if(!orbit) return;
+        const targetRadius = orbit.radius * PVP_ZOOM_FACTOR;
+        mv.cameraOrbit = `${orbit.theta}rad ${orbit.phi}rad ${targetRadius}m`;
+      }catch(e){}
+    }
+
+    function tuneClearLensMaterials(){
+      try{
+        const model = mv.model;
+        if(!model || !model.materials) return;
+        model.materials.forEach(mat=>{
+          const pbr = mat.pbrMetallicRoughness;
+          if(!pbr) return;
+          const base = pbr.baseColorFactor ? [...pbr.baseColorFactor] : [1,1,1,1];
+          base[3] = Math.max(base[3], 0.45);
+          pbr.setBaseColorFactor(base);
+          try{ pbr.setRoughnessFactor(0.28); }catch(e){}
+          try{ pbr.setMetallicFactor(0.0); }catch(e){}
+          if(mat.extensions && mat.extensions.KHR_materials_transmission){
+            mat.extensions.KHR_materials_transmission.transmissionFactor = 0.86;
+          }
+          try{
+            if(mat.emissiveFactor){ mat.emissiveFactor = [0.04, 0.06, 0.07]; }
+          }catch(e){}
+          try{ if(mat.setAlphaMode) mat.setAlphaMode('BLEND'); }catch(e){}
+        });
+      }catch(e){}
+    }
+
+    function backupOriginalColors(){
+      try{
+        const model = mv.model;
+        if(!model || !model.materials) return;
+        allMaterialBackup = model.materials.map(mat=>{
+          const pbr = mat.pbrMetallicRoughness;
+          const base = (pbr && pbr.baseColorFactor) ? [...pbr.baseColorFactor] : [1,1,1,1];
+          return base;
+        });
+      }catch(e){
+        allMaterialBackup = null;
+      }
+    }
+    function restoreOriginalColors(){
+      try{
+        const model = mv.model;
+        if(!model || !model.materials || !allMaterialBackup) return;
+        model.materials.forEach((mat, idx)=>{
+          const pbr = mat.pbrMetallicRoughness;
+          if(!pbr) return;
+          const base = allMaterialBackup[idx] ? [...allMaterialBackup[idx]] : [1,1,1,1];
+          base[3] = Math.max(base[3], 0.45);
+          pbr.setBaseColorFactor(base);
+        });
+      }catch(e){}
+    }
+    function applyTint(){
+      try{
+        const model = mv.model;
+        if(!model || !model.materials) return;
+        model.materials.forEach((mat, idx)=>{
+          const pbr = mat.pbrMetallicRoughness;
+          if(!pbr) return;
+          const cur = pbr.baseColorFactor ? [...pbr.baseColorFactor] : (allMaterialBackup?.[idx] ? [...allMaterialBackup[idx]] : [1,1,1,1]);
+          const a = Math.max(cur[3] ?? 0.45, 0.45);
+          pbr.setBaseColorFactor([BLUEGREEN_TINT[0], BLUEGREEN_TINT[1], BLUEGREEN_TINT[2], a]);
+        });
+      }catch(e){}
+    }
+
+    function syncMissionUI(){
+      missionASD.classList.toggle('on', asdOverlay.classList.contains('show'));
+      missionPVP.classList.toggle('on', pvpOn);
+      missionBlue.classList.toggle('on', bluePanelOpen);
+
+      missionASD.classList.toggle('done', asdDone);
+      missionBlue.classList.toggle('done', blueMission.confirmed);
+      missionPVP.classList.toggle('done', pvpDone);
+    }
+
+    function closeASD(){
+      asdOverlay.classList.remove('show');
+      asdOverlay.setAttribute('aria-hidden','true');
+      resetCameraToModeDefault('lens');
+      syncMissionUI();
+    }
+
+    function setModeButtons(){
+      modeLens.classList.toggle('primary', currentMode === 'lens');
+      modeHeat.classList.toggle('primary', currentMode === 'heat');
+    }
+
+    function forceBlueOff(){
+      blueOn = false;
+      restoreOriginalColors();
+      orbitBeforeBlue = null;
+      targetBeforeBlue = null;
+      __patchBeamsForSafari();
+      setBlueUI();
+      syncMissionUI();
+    }
+
+    function closeBluePanel(){
+      bluePanelOpen = false;
+      forceBlueOff();
+      __patchBeamsForSafari();
+      setBlueUI();
+      syncMissionUI();
+    }
+
+    function forcePVPOff(){
+      if(!pvpOn) return;
+      pvpOn = false;
+      showPVP(false);
+      syncMissionUI();
+    }
+
+    function openASD(){
+      if(bluePanelOpen) closeBluePanel();
+      if(pvpOn) forcePVPOff();
+
+      resetCameraToModeDefault('lens');
+
+      setASDLensSrc();
+      resetASDState();
+      setASDHintDefault();
+
+      if(asdEyeMV){
+        asdEyeMV.src = 'a.png' + '?v=' + Date.now();
+      }
+
+      asdOverlay.classList.add('show');
+      asdOverlay.setAttribute('aria-hidden','false');
+      syncMissionUI();
+    }
+
+    function setModel(file, mode, options = {}){
+      const { resetCamera = false } = options;
+
+      return new Promise((resolve)=>{
+        pendingCameraPreset = null;
+
+        if(!resetCamera){
+          lastOrbit = getOrbitSafe();
+          lastTarget = getTargetSafe();
+        }else{
+          lastOrbit = null;
+          lastTarget = null;
+
+          if(mode === 'heat'){
+            pendingCameraPreset = { orbitStr: HEAT_DEFAULT_ORBIT_STR, targetStr: HEAT_DEFAULT_TARGET_STR };
+          }else{
+            pendingCameraPreset = { orbitStr: CLEAR_DEFAULT_ORBIT_STR, targetStr: CLEAR_DEFAULT_TARGET_STR };
+          }
+        }
+
+        currentMode = mode;
+
+        forcePVPOff();
+        if(bluePanelOpen) closeBluePanel();
+
+        showThickness(mode === 'heat');
+        setModeButtons();
+
+        const onLoadOnce = ()=>{
+          mv.removeEventListener('load', onLoadOnce);
+          resolve();
+        };
+        mv.addEventListener('load', onLoadOnce, { once:true });
+
+        mv.src = file + '?v=' + Date.now();
+      });
+    }
+
+    mv.addEventListener('load', ()=>{
+      if(!defaultOrbit) defaultOrbit = getOrbitSafe();
+      if(!defaultTarget) defaultTarget = getTargetSafe();
+      if(!defaultFov){
+        try{ defaultFov = mv.fieldOfView; }catch(e){ defaultFov = null; }
+      }
+
+      if(pendingCameraPreset){
+        applyTargetStr(pendingCameraPreset.targetStr);
+        applyOrbitStr(pendingCameraPreset.orbitStr);
+
+        setTimeout(()=>{
+          applyTargetStr(pendingCameraPreset.targetStr);
+          applyOrbitStr(pendingCameraPreset.orbitStr);
+        }, 120);
+
+        resetCameraToModeDefault(currentMode);
+        pendingCameraPreset = null;
+      }else{
+        if(lastTarget) applyTarget(lastTarget);
+        if(lastOrbit)  applyOrbit(lastOrbit);
+
+        setTimeout(()=>{
+          if(lastTarget) applyTarget(lastTarget);
+          if(lastOrbit)  applyOrbit(lastOrbit);
+        }, 120);
+      }
+
+      if(currentMode === 'lens'){
+        tuneClearLensMaterials();
+        backupOriginalColors();
+      }
+
+      setModeButtons();
+      __patchBeamsForSafari();
+      setBlueUI();
+      syncMissionUI();
+
+      /* ✅ 터치/로드 후 멈춤 방지: 로드 끝나면 재생 상태 한번 더 강제 */
+      keepMVPlaying();
+      setTimeout(keepMVPlaying, 120);
+    });
+
+    function toggleASD(){
+      if(asdOverlay.classList.contains('show')) closeASD();
+      else openASD();
+    }
+    missionASD.addEventListener('click', toggleASD);
+    missionASD.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') toggleASD(); });
+
+    asdClose.addEventListener('click', closeASD);
+    asdOverlay.addEventListener('click', (e)=>{ if(e.target === asdOverlay) closeASD(); });
+
+    async function togglePVP(){
+      if(currentMode === 'heat'){
+        await setModel('lens_clear.glb', 'lens', { resetCamera:true });
+      }
+      if(currentMode !== 'lens') return;
+
+      if(!pvpOn && bluePanelOpen) closeBluePanel();
+      if(asdOverlay.classList.contains('show')) closeASD();
+
+      pvpOn = !pvpOn;
+
+      if(pvpOn){
+        resetCameraToModeDefault('lens');
+        setTimeout(()=>{
+          zoomInForPVP();
+          showPVP(true);
+          syncMissionUI();
+        }, 140);
+      }else{
+        showPVP(false);
+        resetCameraToModeDefault('lens');
+        syncMissionUI();
+      }
+    }
+    missionPVP.addEventListener('click', togglePVP);
+    missionPVP.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') togglePVP(); });
+
+    function confirmPVP(){
+      pvpDone = true;
+      pvpOn = false;
+      showPVP(false);
+      resetCameraToModeDefault('lens');
+      syncMissionUI();
+    }
+    pvpConfirm.addEventListener('click', (e)=>{ e.stopPropagation(); confirmPVP(); });
+    pvpConfirm.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') { e.preventDefault(); confirmPVP(); } });
+
+    async function toggleBluePanel(){
+      if(currentMode === 'heat'){
+        await setModel('lens_clear.glb', 'lens', { resetCamera:true });
+      }
+      if(currentMode !== 'lens') return;
+
+      forcePVPOff();
+      if(asdOverlay.classList.contains('show')) closeASD();
+
+      bluePanelOpen = !bluePanelOpen;
+
+      if(!bluePanelOpen){
+        closeBluePanel();
+        resetCameraToModeDefault('lens');
+        return;
+      }
+
+      forceBlueOff();
+      bluePanelOpen = true;
+
+      if(!blueMission.confirmed){
+        blueMission.successShown = false;
+      }
+
+      applyOrbitStr(BLUE_PANEL_ORBIT_STR);
+      applyTargetStr(BLUE_PANEL_TARGET_STR);
+      setTimeout(()=>{
+        applyOrbitStr(BLUE_PANEL_ORBIT_STR);
+        applyTargetStr(BLUE_PANEL_TARGET_STR);
+        __patchBeamsForSafari();
+        __forceSvgRedraw();
+        updateBeams();
+        playBeamAnimation();
+      }, 120);
+
+      __patchBeamsForSafari();
+      setBlueUI();
+      syncMissionUI();
+    }
+    missionBlue.addEventListener('click', toggleBluePanel);
+    missionBlue.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') toggleBluePanel(); });
+
+    function setBlueState(nextOn){
+      if(!bluePanelOpen) return;
+
+      const newState = !!nextOn;
+
+      if(blueOn === newState){
+        setBlueUI();
+        updateBeams();
+        playBeamAnimation();
+        return;
+      }
+
+      blueOn = newState;
+
+      if(!blueMission.confirmed && blueOn){
+        blueMission.successShown = true;
+      }
+
+      if(blueOn) blueMission.sawOn = true;
+      else blueMission.sawOff = true;
+
+      if(blueOn){
+        if(!allMaterialBackup) backupOriginalColors();
+        applyTint();
+      }else{
+        restoreOriginalColors();
+      }
+
+      applyOrbitStr(BLUE_PANEL_ORBIT_STR);
+      applyTargetStr(BLUE_PANEL_TARGET_STR);
+      setTimeout(()=>{
+        applyOrbitStr(BLUE_PANEL_ORBIT_STR);
+        applyTargetStr(BLUE_PANEL_TARGET_STR);
+        __patchBeamsForSafari();
+        __forceSvgRedraw();
+        updateBeams();
+        playBeamAnimation();
+      }, 80);
+
+      __patchBeamsForSafari();
+      setBlueUI();
+      syncMissionUI();
+    }
+
+    blueSegOn.addEventListener('click', (e)=>{ e.stopPropagation(); setBlueState(true); });
+    blueSegOff.addEventListener('click', (e)=>{ e.stopPropagation(); setBlueState(false); });
+
+    blueMissionConfirm.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      blueMission.confirmed = true;
+      blueMission.successShown = false;
+      __patchBeamsForSafari();
+      setBlueUI();
+      syncMissionUI();
+    });
+
+    btnReset.addEventListener('click', async ()=>{
+      if(asdOverlay.classList.contains('show')) closeASD();
+      if(pvpOn){ pvpOn = false; showPVP(false); }
+      if(bluePanelOpen){ bluePanelOpen = false; forceBlueOff(); }
+
+      showThickness(currentMode === 'heat');
+      bluePanelOpen = false;
+      setBlueUI();
+
+      resetCameraToModeDefault(currentMode);
+      syncMissionUI();
+    });
+
+    modeLens.addEventListener('click', ()=> setModel('lens_clear.glb', 'lens', { resetCamera:false }));
+    modeHeat.addEventListener('click', ()=> setModel('lens_heatmap.glb', 'heat', { resetCamera:false }));
+
+    setModel('lens_clear.glb', 'lens', { resetCamera:true });
+  </script>
+</body>
+</html>
