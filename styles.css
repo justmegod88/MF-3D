@@ -1,0 +1,332 @@
+/* ===== ACUVUE-ish clean UI (웹 데모 템플릿) ===== */
+:root{
+  --navy:#0B1F33;
+  --navy2:#12304A;
+  --line:rgba(255,255,255,.12);
+  --soft:rgba(255,255,255,.08);
+  --green:#0C8A45;
+  --green2:#10A356;
+  --white:#ffffff;
+  --muted:rgba(255,255,255,.72);
+  --shadow:0 18px 50px rgba(0,0,0,.25);
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;
+  color:var(--white);
+  background:#0a1523;
+}
+
+.app{
+  min-height:100%;
+  display:flex;
+  flex-direction:column;
+}
+
+.topbar{
+  height:56px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 14px;
+  background:#fff;
+  color:#152942;
+  box-shadow:0 2px 0 rgba(0,0,0,.06);
+}
+.topbar-left{font-weight:800}
+.pill{
+  border:1px solid #d9e6f5;
+  background:#f5f9ff;
+  color:#1b3554;
+  padding:10px 14px;
+  border-radius:14px;
+  font-weight:700;
+}
+
+.stage{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  padding:14px;
+  gap:12px;
+}
+
+.cameraWrap{
+  position:relative;
+  flex:1;
+  background:linear-gradient(180deg, #0e2239, #081728);
+  border-radius:18px;
+  overflow:hidden;
+  box-shadow:var(--shadow);
+}
+
+video{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  transform:scaleX(-1); /* 셀피처럼 보이게(필요없으면 삭제) */
+}
+
+.overlay{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+
+.guideRing{
+  position:absolute;
+  left:50%;
+  top:48%;
+  transform:translate(-50%,-50%);
+  border:2px solid rgba(255,255,255,.28);
+  border-radius:999px;
+}
+.ring1{ width:78%; aspect-ratio:1/1; }
+.ring2{ width:56%; aspect-ratio:1/1; opacity:.85; }
+.ring3{ width:34%; aspect-ratio:1/1; opacity:.55; }
+
+.mark123{
+  position:absolute;
+  left:50%;
+  top:76%;
+  transform:translate(-50%,-50%);
+  width:52px;
+  height:52px;
+  border-radius:999px;
+  background:rgba(255,255,255,.16);
+  border:1px solid rgba(255,255,255,.35);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+  letter-spacing:.5px;
+}
+
+.overlayHint{
+  position:absolute;
+  left:50%;
+  bottom:14px;
+  transform:translateX(-50%);
+  background:rgba(0,0,0,.35);
+  border:1px solid rgba(255,255,255,.18);
+  padding:10px 12px;
+  border-radius:14px;
+  font-weight:700;
+  font-size:13px;
+}
+
+.panel{
+  background:linear-gradient(180deg, #0e2239, #0a1a2d);
+  border-radius:18px;
+  padding:12px;
+  border:1px solid rgba(255,255,255,.08);
+}
+
+.panelRow{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  color:var(--muted);
+  font-size:13px;
+  padding:2px 2px 10px;
+}
+.panelRow b{color:#fff}
+
+.actions{
+  display:flex;
+  gap:10px;
+}
+
+.btnPrimary{
+  flex:1;
+  border:none;
+  background:linear-gradient(180deg,#1e78d6,#005eb8);
+  color:#fff;
+  padding:14px 14px;
+  border-radius:16px;
+  font-weight:900;
+  font-size:16px;
+}
+.btnGhost{
+  flex:1;
+  border:1px solid rgba(255,255,255,.18);
+  background:rgba(255,255,255,.06);
+  color:#fff;
+  padding:14px 14px;
+  border-radius:16px;
+  font-weight:800;
+  font-size:15px;
+}
+
+.note{
+  margin-top:10px;
+  font-size:12px;
+  color:rgba(255,255,255,.62);
+}
+
+/* ===== Result / 3D ===== */
+.stageResult{ padding-top:12px; }
+.titlePill{
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.14);
+  padding:12px 14px;
+  border-radius:18px;
+  font-weight:900;
+}
+
+.viewerCard{
+  background:linear-gradient(180deg,#0e2239,#081728);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:22px;
+  padding:12px;
+  box-shadow:var(--shadow);
+}
+
+.viewerArea{
+  position:relative;
+  border-radius:18px;
+  overflow:hidden;
+  background:radial-gradient(circle at 35% 30%, rgba(255,255,255,.18), rgba(255,255,255,0) 55%),
+             linear-gradient(180deg,#0b2137,#071425);
+  height:min(56vh, 520px);
+}
+
+model-viewer{
+  width:100%;
+  height:100%;
+  background:transparent;
+}
+
+.ringOverlay{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  border:2px solid rgba(255,255,255,.10);
+  border-radius:999px;
+  pointer-events:none;
+}
+.r1{ width:86%; aspect-ratio:1/1; }
+.r2{ width:62%; aspect-ratio:1/1; }
+.r3{ width:38%; aspect-ratio:1/1; }
+
+.iconRail{
+  position:absolute;
+  right:10px;
+  top:14px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.iconBtn{
+  width:52px;
+  height:52px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.22);
+  background:rgba(255,255,255,.10);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+}
+
+.iconBtn.active{
+  outline:3px solid rgba(30,120,214,.55);
+  background:rgba(30,120,214,.18);
+}
+
+.iconDrop{ font-size:20px; }
+.iconText{ font-size:16px; letter-spacing:.4px; }
+.iconSquare{
+  width:18px;
+  height:18px;
+  background:#1e78d6;
+  border-radius:4px;
+  box-shadow:0 0 0 2px rgba(255,255,255,.12) inset;
+}
+
+.infoCard{
+  margin-top:12px;
+  background:linear-gradient(180deg, var(--green2), var(--green));
+  border-radius:18px;
+  padding:14px 14px 12px;
+  color:#fff;
+}
+.infoTitle{
+  font-weight:1000;
+  font-size:22px;
+  text-align:center;
+  margin-bottom:6px;
+}
+.infoBody{
+  text-align:center;
+  font-weight:800;
+  font-size:14px;
+  opacity:.96;
+}
+.infoSub{
+  margin-top:10px;
+  text-align:center;
+  background:rgba(0,0,0,.18);
+  border:1px solid rgba(255,255,255,.18);
+  padding:10px 12px;
+  border-radius:14px;
+  font-size:13px;
+  font-weight:700;
+  opacity:.98;
+}
+
+.panelRowBottom{
+  margin-top:10px;
+  padding-bottom:0;
+}
+
+.bottomActions{
+  display:flex;
+  gap:10px;
+  margin-top:10px;
+}
+.bottomActions .btnGhost{
+  background:rgba(255,255,255,.06);
+}
+
+#btnSurvey{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.surveyText{ text-align:left; }
+.surveyTitle{ font-weight:900; font-size:15px; }
+.surveySub{ font-size:13px; opacity:.9; }
+.surveyIcon{
+  width:44px;
+  height:44px;
+  border-radius:14px;
+  background:rgba(255,255,255,.10);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
+}
+
+.thumb{
+  position:absolute;
+  left:10px;
+  top:10px;
+  width:92px;
+  height:92px;
+  border-radius:16px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.18);
+  background:rgba(0,0,0,.25);
+}
+.thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+.hidden{ display:none !important; }

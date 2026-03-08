@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>ACUVUE Smart Fitting | 결과(3D)</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <!-- model-viewer (Google) -->
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+</head>
+<body class="app">
+  <header class="topbar">
+    <div class="topbar-left">결과</div>
+    <div class="topbar-right">
+      <button class="pill" id="btnClose" type="button">닫기</button>
+    </div>
+  </header>
+
+  <main class="stage stageResult">
+    <div class="titlePill">아큐브 오아시스 맥스 구면</div>
+
+    <section class="viewerCard">
+      <div class="viewerArea">
+        <model-viewer
+          id="mv"
+          src="./assets/lens.glb"
+          camera-controls
+          touch-action="pan-y"
+          interaction-prompt="none"
+          exposure="1.0"
+          shadow-intensity="0.7"
+          alt="렌즈 3D 모델">
+        </model-viewer>
+
+        <!-- 원형 오버레이(장식) -->
+        <div class="ringOverlay r1"></div>
+        <div class="ringOverlay r2"></div>
+        <div class="ringOverlay r3"></div>
+
+        <!-- 오른쪽 아이콘 버튼 -->
+        <div class="iconRail" role="group" aria-label="기능 버튼">
+          <button class="iconBtn" id="btnPvp" title="습윤 기술" type="button">
+            <span class="iconDrop">💧</span>
+          </button>
+          <button class="iconBtn" id="btn123" title="123 마크" type="button">
+            <span class="iconText">123</span>
+          </button>
+          <button class="iconBtn" id="btnDesign" title="렌즈 구조" type="button">
+            <span class="iconSquare"></span>
+          </button>
+        </div>
+
+        <!-- (옵션) AR 캡처 이미지 썸네일 -->
+        <div class="thumb" id="thumb" hidden>
+          <img id="thumbImg" alt="촬영 이미지" />
+        </div>
+      </div>
+
+      <!-- 설명 카드 -->
+      <div class="infoCard" id="infoCard">
+        <div class="infoTitle" id="infoTitle">123마크</div>
+        <div class="infoBody" id="infoBody">콘택트렌즈가 뒤집혀 있는지 확인이 가능해요</div>
+        <div class="infoSub" id="infoSub">필요 시 실제 가이드 문구로 교체하면 됩니다.</div>
+      </div>
+
+      <div class="panelRow panelRowBottom">
+        <div class="status">상태: <b id="statusText">실행 중</b></div>
+        <div class="howto">조작: <b id="howtoText">드래그(살짝 회전)</b></div>
+      </div>
+
+      <div class="bottomActions">
+        <button class="btnGhost" id="btnRetry" type="button">다시 촬영하기</button>
+        <button class="btnGhost" id="btnSurvey" type="button">
+          <div class="surveyText">
+            <div class="surveyTitle">만족도 조사</div>
+            <div class="surveySub">기프티콘 <b>100%</b> 제공</div>
+          </div>
+          <div class="surveyIcon" aria-hidden="true">☕</div>
+        </button>
+      </div>
+
+      <div class="note">
+        * 지금 버전은 AR 없이 정면 렌즈 UI만 보여줍니다. (데모)
+      </div>
+    </section>
+  </main>
+
+  <script src="./result.js"></script>
+</body>
+</html>
