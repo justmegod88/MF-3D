@@ -7,14 +7,12 @@
 <style>
   :root{
     --acuvue-blue:#005EB8;
-    --acuvue-blue-dark:#004a91;
     --bg:#f3f6fb;
     --card:#ffffff;
     --line:#d8e2ef;
     --text:#15304b;
     --sub:#60758a;
     --shadow:0 14px 34px rgba(16,42,67,.10);
-    --radius:24px;
   }
   *{box-sizing:border-box}
   body{
@@ -25,7 +23,7 @@
     padding:28px 18px 60px;
   }
   .wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
-  .hero,.card,.visionCard,.compareCard,.placeholderCard,.pageFootnote,.accordionCard{
+  .hero,.card,.visionCard,.pageFootnote,.accordionCard{
     width:100%;background:var(--card);border:1px solid var(--line);border-radius:28px;box-shadow:var(--shadow);
   }
   .hero{padding:22px 24px;overflow:hidden;position:relative}
@@ -50,7 +48,7 @@
 
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
   .card{padding:22px}
-  .card h3,.visionCard h3,.compareCard h3,.placeholderCard h3{
+  .card h3,.visionCard h3{
     margin:0 0 12px;font-size:22px;letter-spacing:-.03em;line-height:1.3;
   }
   .guide{margin:0 0 18px;color:var(--sub);font-size:15px;font-weight:700;line-height:1.62}
@@ -80,20 +78,20 @@
   .radio label{display:flex;align-items:center;gap:6px;font-weight:900;color:var(--text);white-space:nowrap;font-size:14px}
 
   .lensWrap{display:flex;flex-direction:column;gap:14px;align-items:center}
-  .lensStage{width:100%;position:relative;display:flex;justify-content:center;align-items:center;min-height:300px}
+  .lensStage{width:100%;display:flex;justify-content:center;align-items:center;min-height:300px}
   .lensFrame{position:relative;width:min(100%,560px);display:flex;justify-content:center;align-items:center}
   .lensImageWrap{position:relative;width:420px;height:420px;display:grid;place-items:center}
   .lensImage{width:100%;height:100%;object-fit:contain;user-select:none;-webkit-user-drag:none;filter:drop-shadow(0 18px 34px rgba(0,94,184,.10))}
-  .pupilOverlay,.mismatchHighlight{
-    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;
-    transition:width .35s ease,height .35s ease,opacity .2s ease, background .35s ease;
-  }
-  .pupilOverlay{border:3px dashed rgba(21,48,75,.86);background:rgba(255,255,255,.02);width:0;height:0}
-  .mismatchHighlight{pointer-events:none;opacity:0}
   .lensLegend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:4px}
   .legendItem{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:800;color:#597087}
   .legendDot{width:11px;height:11px;border-radius:50%;border:1px solid rgba(0,0,0,.08)}
   .legendPupil{width:13px;height:13px;border-radius:50%;border:2px dashed #21384f;background:#fff}
+  .legendGap{
+    width:13px;height:13px;border-radius:50%;
+    background:rgba(255,233,102,.55);
+    border:1px solid rgba(201,176,40,.6);
+  }
+
   .toggleMini{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%}
   .miniBtn{border:1px solid var(--line);background:#fff;border-radius:14px;padding:11px 10px;font-weight:900;color:var(--text);cursor:pointer;text-align:center;white-space:nowrap}
   .miniBtn.active{background:#eef4ff;border-color:#b7cff4;color:var(--acuvue-blue)}
@@ -117,7 +115,6 @@
   .tag{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;background:#eaf3ff;border:1px solid #cfe1f8;color:#195aa8;font-size:12px;font-weight:900}
 
   .sideGrid{display:grid;grid-template-columns:1fr;gap:18px}
-  .compareCard,.placeholderCard{padding:22px}
   .compareRow{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
   .compareBox{border-radius:18px;padding:16px;border:1px solid #e0e8f3;background:#fbfdff}
   .compareBox.good{background:linear-gradient(180deg,#f3f9ff 0%, #fbfdff 100%);border-color:#cfe1f8}
@@ -148,7 +145,6 @@
   .accordionCard[open] .accordionSummary::after{transform:rotate(180deg)}
   .accordionBody{padding:0 24px 22px}
 
-  .placeholderBox{margin-top:16px;border-radius:20px;min-height:220px;border:1.5px dashed #b8cbe3;background:radial-gradient(circle at 30% 25%, rgba(255,255,255,.95) 0%, rgba(255,255,255,.2) 18%, rgba(255,255,255,0) 30%), linear-gradient(180deg,#eef5ff 0%, #f8fbff 100%);display:grid;place-items:center;text-align:center;padding:20px;color:#6c8297;font-size:15px;line-height:1.7}
   .pageFootnote{padding:12px 16px;color:var(--sub);font-weight:800;font-size:13px;line-height:1.5;box-shadow:none}
 
   @media (max-width:980px){
@@ -159,12 +155,12 @@
   }
   @media (max-width:560px){
     body{padding:14px 12px 40px}
-    .hero,.card,.visionCard,.compareCard,.placeholderCard,.accordionCard{border-radius:22px}
-    .card,.visionCard,.compareCard,.placeholderCard,.hero{padding:18px}
+    .hero,.card,.visionCard,.accordionCard{border-radius:22px}
+    .card,.visionCard,.hero{padding:18px}
     .accordionSummary{padding:18px;font-size:18px}
     .accordionBody{padding:0 18px 18px}
     .heroTitle{font-size:clamp(15px,5.6vw,19px);max-width:100%;line-height:1.34}
-    .card h3,.visionCard h3,.compareCard h3,.placeholderCard h3{font-size:18px}
+    .card h3,.visionCard h3{font-size:18px}
     .guide{font-size:13px;line-height:1.52}
     .eye{width:190px;height:190px}
     .label,.value{font-size:16px}
@@ -243,8 +239,6 @@
           <div class="lensFrame">
             <div class="lensImageWrap">
               <img class="lensImage" id="lensImage" alt="광학부 이미지" src="">
-              <div class="mismatchHighlight" id="mismatchHighlight"></div>
-              <div class="pupilOverlay" id="pupilOverlay"></div>
             </div>
           </div>
         </div>
@@ -252,6 +246,7 @@
           <div class="legendItem"><span class="legendDot" style="background:#4b8fe2"></span>원거리 영역</div>
           <div class="legendItem"><span class="legendDot" style="background:#9fce78"></span>중간거리 영역</div>
           <div class="legendItem"><span class="legendDot" style="background:#ea8a5a"></span>근거리 영역</div>
+          <div class="legendItem"><span class="legendGap"></span>흐림 발생 구간</div>
           <div class="legendItem"><span class="legendPupil"></span>예측 동공 사이즈</div>
         </div>
         <div class="toggleMini">
@@ -329,8 +324,6 @@
   const designRadios = document.querySelectorAll('input[name="design"]');
   const pupilEl = document.getElementById('pupil');
   const pupilText = document.getElementById('pupilText');
-  const pupilOverlay = document.getElementById('pupilOverlay');
-  const mismatchHighlight = document.getElementById('mismatchHighlight');
   const showBothBtn = document.getElementById('showBothBtn');
   const showPupilBtn = document.getElementById('showPupilBtn');
   const showOpticBtn = document.getElementById('showOpticBtn');
@@ -385,21 +378,21 @@
     return standardOpticZone;
   }
 
-  function makeLensSvg(ozMM, overlayModeValue) {
-    const opticDiameter = mmToLensPx(ozMM);
-    const outerR = Math.round(opticDiameter / 2);
-    const midR = Math.round(outerR * 0.72);
-    const nearR = Math.round(outerR * 0.43);
+  function makeLensSvg(pupilMM, ozMM, overlayModeValue) {
+    const pupilR = Math.round(mmToLensPx(pupilMM) / 2);
+    const farR = Math.round(mmToLensPx(ozMM) / 2); // 광학부 외곽 = 파란색 끝
+    const midR = Math.round(farR * 0.72);
+    const nearR = Math.round(farR * 0.43);
 
+    const showPupil = overlayModeValue === 'both' || overlayModeValue === 'pupil';
     const showOptic = overlayModeValue === 'both' || overlayModeValue === 'optic';
-    const farOpacity = showOptic ? '1' : '0';
-    const midOpacity = showOptic ? '1' : '0';
-    const nearOpacity = showOptic ? '1' : '0';
-    const lineOpacityOuter = showOptic ? '0.88' : '0';
-    const lineOpacityMid = showOptic ? '0.82' : '0';
-    const lineOpacityNear = showOptic ? '0.78' : '0';
+    const showGap = overlayModeValue === 'both' && Math.abs(pupilR - farR) >= 4;
 
-    const labelYFar = 210 - outerR + 30;
+    const innerGapR = Math.min(pupilR, farR);
+    const outerGapR = Math.max(pupilR, farR);
+    const blueEdgeInnerR = Math.max(midR, farR - 10);
+
+    const labelYFar = 210 - farR + 30;
     const labelYMid = 210 - midR + 24;
     const labelYNear = 210 - nearR + 24;
 
@@ -412,52 +405,51 @@
       <stop offset="100%" stop-color="#eef4fb" stop-opacity="0.88"/>
     </radialGradient>
 
-    <radialGradient id="outerLens" cx="50%" cy="45%" r="50%">
-      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.12"/>
-      <stop offset="58%" stop-color="#f4f8fd" stop-opacity="0.76"/>
-      <stop offset="100%" stop-color="#dde8f6" stop-opacity="1"/>
-    </radialGradient>
-
-    <radialGradient id="farZone" cx="50%" cy="46%" r="64%">
-      <stop offset="0%" stop-color="#8fb6ef"/>
-      <stop offset="62%" stop-color="#6f9ee4"/>
-      <stop offset="100%" stop-color="#5d89d6"/>
-    </radialGradient>
-
-    <radialGradient id="midZone" cx="50%" cy="50%" r="60%">
-      <stop offset="0%" stop-color="#c7e4a7"/>
-      <stop offset="58%" stop-color="#add486"/>
-      <stop offset="100%" stop-color="#95bf83"/>
-    </radialGradient>
-
-    <radialGradient id="nearZone" cx="50%" cy="52%" r="58%">
-      <stop offset="0%" stop-color="#e47d67"/>
-      <stop offset="55%" stop-color="#eb9a67"/>
-      <stop offset="100%" stop-color="#f1c84a"/>
+    <radialGradient id="lensBody" cx="50%" cy="48%" r="55%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.10"/>
+      <stop offset="72%" stop-color="#e6eef9" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#dbe7f5" stop-opacity="0.34"/>
     </radialGradient>
 
     <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
       <feGaussianBlur stdDeviation="10"/>
     </filter>
+
+    <mask id="gapRingMask">
+      <rect width="420" height="420" fill="black"/>
+      ${showGap ? `<circle cx="210" cy="210" r="${outerGapR}" fill="white"/>` : ``}
+      ${showGap ? `<circle cx="210" cy="210" r="${innerGapR}" fill="black"/>` : ``}
+    </mask>
+
+    <mask id="blueEdgeMask">
+      <rect width="420" height="420" fill="black"/>
+      ${showGap && farR > pupilR ? `<circle cx="210" cy="210" r="${farR}" fill="white"/>` : ``}
+      ${showGap && farR > pupilR ? `<circle cx="210" cy="210" r="${blueEdgeInnerR}" fill="black"/>` : ``}
+    </mask>
   </defs>
 
   <rect width="420" height="420" fill="url(#bg)"/>
-  <circle cx="210" cy="210" r="170" fill="url(#outerLens)" stroke="#d9e4f2" stroke-width="2"/>
 
-  <g opacity="0.9">
-    <path d="M210 38 C220 78 230 118 210 162 C190 118 200 78 210 38Z" fill="#ffffff" fill-opacity="0.72" filter="url(#softGlow)"/>
-    <path d="M196 52 C202 92 208 126 196 162 C184 124 188 92 196 52Z" fill="#ffffff" fill-opacity="0.38" filter="url(#softGlow)"/>
+  <circle cx="210" cy="210" r="170" fill="url(#lensBody)" stroke="#cddbef" stroke-width="1.8"/>
+
+  <g opacity="0.75">
+    <path d="M210 38 C220 78 230 118 210 162 C190 118 200 78 210 38Z" fill="#ffffff" fill-opacity="0.34" filter="url(#softGlow)"/>
+    <path d="M196 52 C202 92 208 126 196 162 C184 124 188 92 196 52Z" fill="#ffffff" fill-opacity="0.18" filter="url(#softGlow)"/>
   </g>
 
-  <circle cx="210" cy="210" r="${outerR}" fill="url(#farZone)" opacity="${farOpacity}"/>
-  <circle cx="210" cy="210" r="${midR}" fill="url(#midZone)" opacity="${midOpacity}"/>
-  <circle cx="210" cy="210" r="${nearR}" fill="url(#nearZone)" opacity="${nearOpacity}"/>
+  ${showOptic ? `<circle cx="210" cy="210" r="${farR}" fill="#6f9ee4"/>` : ''}
+  ${showOptic ? `<circle cx="210" cy="210" r="${midR}" fill="#add486"/>` : ''}
+  ${showOptic ? `<circle cx="210" cy="210" r="${nearR}" fill="#eb9a67"/>` : ''}
 
-  <circle cx="210" cy="210" r="${outerR}" fill="none" stroke="#ffffff" stroke-opacity="${lineOpacityOuter}" stroke-width="2.8"/>
-  <circle cx="210" cy="210" r="${midR}" fill="none" stroke="#ffffff" stroke-opacity="${lineOpacityMid}" stroke-width="2.4"/>
-  <circle cx="210" cy="210" r="${nearR}" fill="none" stroke="#ffffff" stroke-opacity="${lineOpacityNear}" stroke-width="2.4"/>
+  ${showGap ? `<circle cx="210" cy="210" r="${outerGapR}" fill="rgba(255,233,102,0.38)" mask="url(#gapRingMask)"/>` : ''}
 
-  <circle cx="210" cy="210" r="168" fill="none" stroke="#cddbef" stroke-width="1.4"/>
+  ${showGap && farR > pupilR && showOptic ? `<circle cx="210" cy="210" r="${farR}" fill="#6f9ee4" mask="url(#blueEdgeMask)"/>` : ''}
+
+  ${showOptic ? `<circle cx="210" cy="210" r="${farR}" fill="none" stroke="#ffffff" stroke-opacity="0.88" stroke-width="2.8"/>` : ''}
+  ${showOptic ? `<circle cx="210" cy="210" r="${midR}" fill="none" stroke="#ffffff" stroke-opacity="0.82" stroke-width="2.4"/>` : ''}
+  ${showOptic ? `<circle cx="210" cy="210" r="${nearR}" fill="none" stroke="#ffffff" stroke-opacity="0.78" stroke-width="2.4"/>` : ''}
+
+  ${showPupil ? `<circle cx="210" cy="210" r="${pupilR}" fill="none" stroke="#21384f" stroke-width="2.8" stroke-dasharray="10 10" stroke-linecap="round" opacity="0.88"/>` : ''}
 
   ${showOptic ? `<text x="210" y="${labelYFar}" text-anchor="middle" font-size="24" font-weight="700" fill="#3a77d6" font-family="Apple SD Gothic Neo, Pretendard, Arial, sans-serif">원</text>` : ''}
   ${showOptic ? `<text x="210" y="${labelYMid}" text-anchor="middle" font-size="24" font-weight="700" fill="#7ca95c" font-family="Apple SD Gothic Neo, Pretendard, Arial, sans-serif">중</text>` : ''}
@@ -466,47 +458,6 @@
     `.trim();
 
     return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
-  }
-
-  function applyOverlays(pupilMM, ozMM) {
-    const pupilPX = mmToLensPx(pupilMM);
-    const ozPX = mmToLensPx(ozMM);
-
-    pupilOverlay.style.width = `${pupilPX}px`;
-    pupilOverlay.style.height = `${pupilPX}px`;
-
-    const diff = pupilPX - ozPX;
-    const absDiff = Math.abs(diff);
-    if(absDiff >= 6) {
-      const innerPx = Math.min(pupilPX, ozPX);
-      const outerPx = Math.max(pupilPX, ozPX);
-      mismatchHighlight.style.width = `${outerPx}px`;
-      mismatchHighlight.style.height = `${outerPx}px`;
-      const innerRadius = innerPx / 2;
-      const outerRadius = outerPx / 2;
-      mismatchHighlight.style.background = `radial-gradient(circle, transparent 0 ${Math.max(0, innerRadius - 1)}px, rgba(255,233,102,.34) ${innerRadius}px ${outerRadius}px, transparent ${outerRadius + 1}px 100%)`;
-      mismatchHighlight.style.opacity = '1';
-    } else {
-      mismatchHighlight.style.opacity = '0';
-      mismatchHighlight.style.background = 'none';
-    }
-  }
-
-  function applyOverlayVisibility() {
-    if(overlayMode === 'both') {
-      pupilOverlay.style.opacity = '1';
-      mismatchHighlight.style.opacity = mismatchHighlight.style.background && mismatchHighlight.style.background !== 'none' ? '1' : '0';
-    } else if(overlayMode === 'pupil') {
-      pupilOverlay.style.opacity = '1';
-      mismatchHighlight.style.opacity = '0';
-    } else {
-      pupilOverlay.style.opacity = '0';
-      mismatchHighlight.style.opacity = '0';
-    }
-
-    showBothBtn.classList.toggle('active', overlayMode === 'both');
-    showPupilBtn.classList.toggle('active', overlayMode === 'pupil');
-    showOpticBtn.classList.toggle('active', overlayMode === 'optic');
   }
 
   function setExplain(tags, conclusion) {
@@ -528,7 +479,7 @@
     if(mode === '183') {
       setExplain(
         [{label:'광학부 사이즈≈동공사이즈'}, {label:'전반적 선명'}],
-        '도수와 가입도가 고려된 183가지 동공 사이즈별 광학부로 적용으로 모든 거리에서 선명한 시야를 제공합니다.'
+        '도수와 가입도가 고려된 183가지 동공 사이즈별 광학부 적용으로 모든 거리에서 선명한 시야를 제공합니다.'
       );
       return;
     }
@@ -543,13 +494,13 @@
       screen.classList.add('mask-center');
       setExplain(
         [{label:'광학부 사이즈>동공사이즈'}, {label:'중심부 흐림'}],
-        '광학부에 비해 동공 사이즈가 작아 충분하지 못한 원거리 영역으로 인한 흐림이 발생할 수 있습니다.'
+        '점선 동공과 광학부 사이 갭(노란 띠) 구간에서 중심부 흐림이 발생할 수 있습니다.'
       );
     } else {
       screen.classList.add('mask-periphery','fishbowl');
       setExplain(
         [{label:'동공사이즈>광학부사이즈'}, {label:'주변부 흐림 가능'}],
-        '광학부에 비해 동공이 더 커 주변부 쪽 흐림 또는 번짐이 발생할 수 있습니다.'
+        '점선 동공과 광학부 사이 갭(노란 띠) 구간에서 주변부 흐림 또는 번짐이 발생할 수 있습니다.'
       );
     }
   }
@@ -566,17 +517,18 @@
     pupilText.textContent = `${pupilMM.toFixed(1)} mm`;
 
     const ozMM = calcOpticZoneMM(mode, pupilMM);
-    lensImage.src = makeLensSvg(ozMM, overlayMode);
+    lensImage.src = makeLensSvg(pupilMM, ozMM, overlayMode);
 
-    applyOverlays(pupilMM, ozMM);
-    applyOverlayVisibility();
+    showBothBtn.classList.toggle('active', overlayMode === 'both');
+    showPupilBtn.classList.toggle('active', overlayMode === 'pupil');
+    showOpticBtn.classList.toggle('active', overlayMode === 'optic');
+
     applyVisionEffect(mode, pupilMM, ozMM);
   }
 
   sphereSlider.addEventListener('input', updateAll);
   addSlider.addEventListener('input', updateAll);
   designRadios.forEach(r => r.addEventListener('change', updateAll));
-  window.addEventListener('resize', updateAll);
 
   showBothBtn.addEventListener('click', () => { overlayMode = 'both'; updateAll(); });
   showPupilBtn.addEventListener('click', () => { overlayMode = 'pupil'; updateAll(); });
@@ -623,4 +575,4 @@
   updateAll();
 </script>
 </body>
-</html>
+</html>"
