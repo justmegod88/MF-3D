@@ -16,28 +16,150 @@
       --shadow:0 14px 34px rgba(16,42,67,.10);
     }
     *{box-sizing:border-box}
-    html,body{margin:0;padding:0;background:linear-gradient(180deg,#eef4fb 0%, #f7f9fc 60%, #f3f6fb 100%);font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Segoe UI",Arial,sans-serif;color:var(--text)}
-    .wrap{max-width:980px;margin:0 auto;padding:18px 14px 40px}
-    .top-cards{margin-bottom:18px}
-    .menu-card{background:var(--card);border:1.5px solid #dbe5f1;border-radius:22px;padding:20px 18px 18px;box-shadow:var(--shadow);min-height:118px;cursor:pointer;transition:.2s ease;width:100%}
-    .menu-card.active{border-color:#b8d2f6;background:linear-gradient(180deg,#ffffff 0%, #f5f9ff 100%);box-shadow:0 14px 34px rgba(13,99,198,.10)}
-    .menu-eyebrow{font-size:18px;line-height:1.25;font-weight:700;letter-spacing:-.03em;color:#314962;margin-bottom:6px;word-break:keep-all}
-    .menu-title{font-size:28px;line-height:1.2;font-weight:900;letter-spacing:-.03em;color:#102a46;margin-bottom:18px;word-break:keep-all}
-    .menu-sub{font-size:16px;color:#66798e;line-height:1.4}
-    .hero-3d{background:linear-gradient(180deg,#f9fbff 0%, #f2f6fc 100%);border:1.5px solid #dce5f1;border-radius:28px;box-shadow:var(--shadow);padding:18px 18px 22px;margin-bottom:18px}
-    .hero-viewer{width:100%;min-height:460px;border-radius:24px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;background:radial-gradient(circle at 50% 35%, rgba(255,255,255,.96) 0%, rgba(255,255,255,.45) 18%, rgba(255,255,255,0) 34%), linear-gradient(180deg,#fbfcff 0%, #f3f7fd 100%)}
-    model-viewer{width:100%;height:460px;background:transparent;--poster-color:transparent}
-    .hero-buttons{display:grid;grid-template-columns:84px 1fr 1fr;gap:12px;margin-top:18px}
-    .round-btn,.mode-btn{height:72px;border-radius:22px;border:1.5px solid #d3deec;background:#fff;color:#13314c;font-size:16px;font-weight:900;letter-spacing:-.02em;box-shadow:var(--shadow);cursor:pointer}
-    .mode-btn.active{background:linear-gradient(180deg,var(--blue) 0%, #0b5bb5 100%);color:#fff;border-color:var(--blue);box-shadow:0 14px 28px rgba(13,99,198,.20)}
-    .round-btn{font-size:30px;display:flex;align-items:center;justify-content:center}
+    html,body{
+      margin:0;
+      padding:0;
+      background:linear-gradient(180deg,#eef4fb 0%, #f7f9fc 60%, #f3f6fb 100%);
+      font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Segoe UI",Arial,sans-serif;
+      color:var(--text);
+    }
+    .wrap{
+      max-width:980px;
+      margin:0 auto;
+      padding:18px 14px 40px;
+    }
+
+    .top-cards{
+      margin-bottom:18px;
+    }
+    .menu-card{
+      background:var(--card);
+      border:1.5px solid #dbe5f1;
+      border-radius:22px;
+      padding:18px 16px 16px;
+      box-shadow:var(--shadow);
+      min-height:118px;
+      cursor:pointer;
+      transition:.2s ease;
+      width:100%;
+    }
+    .menu-card.active{
+      border-color:#b8d2f6;
+      background:linear-gradient(180deg,#ffffff 0%, #f5f9ff 100%);
+      box-shadow:0 14px 34px rgba(13,99,198,.10);
+    }
+    .menu-eyebrow{
+      font-size:18px;
+      line-height:1.2;
+      font-weight:700;
+      letter-spacing:-.03em;
+      color:#314962;
+      margin-bottom:6px;
+      word-break:keep-all;
+    }
+    .menu-title{
+      font-size:22px;
+      line-height:1.2;
+      font-weight:900;
+      letter-spacing:-.03em;
+      color:#102a46;
+      margin-bottom:10px;
+      word-break:keep-all;
+    }
+    .menu-sub{
+      font-size:15px;
+      color:#66798e;
+      line-height:1.4;
+    }
+
+    .hero-3d{
+      background:linear-gradient(180deg,#f9fbff 0%, #f2f6fc 100%);
+      border:1.5px solid #dce5f1;
+      border-radius:28px;
+      box-shadow:var(--shadow);
+      padding:18px 18px 22px;
+      margin-bottom:18px;
+      position:relative;
+      z-index:1;
+    }
+    .hero-viewer{
+      width:100%;
+      min-height:460px;
+      border-radius:24px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      position:relative;
+      overflow:hidden;
+      background:
+        radial-gradient(circle at 50% 35%, rgba(255,255,255,.96) 0%, rgba(255,255,255,.45) 18%, rgba(255,255,255,0) 34%),
+        linear-gradient(180deg,#fbfcff 0%, #f3f7fd 100%);
+    }
+    model-viewer{
+      width:100%;
+      height:460px;
+      background:transparent;
+      --poster-color:transparent;
+      display:block;
+    }
+
+    .hero-buttons{
+      display:grid;
+      grid-template-columns:84px 1fr 1fr;
+      gap:12px;
+      margin-top:18px;
+      position:relative;
+      z-index:2;
+    }
+    .round-btn,.mode-btn{
+      height:72px;
+      border-radius:22px;
+      border:1.5px solid #d3deec;
+      background:#fff;
+      color:#13314c;
+      font-size:16px;
+      font-weight:900;
+      letter-spacing:-.02em;
+      box-shadow:var(--shadow);
+      cursor:pointer;
+      -webkit-appearance:none;
+      appearance:none;
+      pointer-events:auto;
+    }
+    .mode-btn.active{
+      background:linear-gradient(180deg,var(--blue) 0%, #0b5bb5 100%);
+      color:#fff;
+      border-color:var(--blue);
+      box-shadow:0 14px 28px rgba(13,99,198,.20);
+    }
+    .round-btn{
+      font-size:30px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
     @media (max-width:720px){
-      .menu-card{min-height:108px;padding:18px 16px}
-      .menu-eyebrow{font-size:16px}
-      .menu-title{font-size:24px;margin-bottom:14px}
-      .menu-sub{font-size:14px}
-      .hero-viewer,model-viewer{min-height:380px;height:380px}
-      .hero-buttons{grid-template-columns:76px 1fr 1fr}
+      .menu-card{
+        min-height:108px;
+        padding:16px 14px;
+      }
+      .menu-eyebrow{
+        font-size:16px;
+      }
+      .menu-title{
+        font-size:19px;
+      }
+      .menu-sub{
+        font-size:13px;
+      }
+      .hero-viewer,model-viewer{
+        min-height:380px;
+        height:380px;
+      }
+      .hero-buttons{
+        grid-template-columns:76px 1fr 1fr;
+      }
     }
   </style>
 </head>
@@ -84,4 +206,27 @@
     const viewer = document.getElementById('lensViewer');
     const resetBtn = document.getElementById('resetBtn');
     const transparentBtn = document.getElementById('transparentBtn');
-    const powerBtn =
+    const powerBtn = document.getElementById('powerBtn');
+    const card1 = document.getElementById('card1');
+
+    function setMode(mode){
+      transparentBtn.classList.toggle('active', mode === 'transparent');
+      powerBtn.classList.toggle('active', mode === 'power');
+      viewer.src = mode === 'transparent' ? 'lens_clear.glb' : 'lens_powermap.glb';
+    }
+
+    function resetViewer(){
+      viewer.cameraOrbit = '0deg 75deg 105%';
+      viewer.fieldOfView = '30deg';
+    }
+
+    transparentBtn.addEventListener('click', () => setMode('transparent'));
+    powerBtn.addEventListener('click', () => setMode('power'));
+    resetBtn.addEventListener('click', resetViewer);
+
+    card1.addEventListener('click', () => {
+      window.open('card1.html', '_blank');
+    });
+  </script>
+</body>
+</html>
