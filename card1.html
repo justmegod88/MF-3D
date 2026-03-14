@@ -11,16 +11,16 @@
     --bg:#f3f5fa;
     --card:#ffffff;
     --line:#d9e2ee;
+    --line-soft:#dfe7f2;
     --text:#1f4467;
     --title:#1f3554;
     --sub:#6b7b93;
-    --shadow:0 16px 38px rgba(39,72,117,.08);
-    --soft-blue:#eef5fc;
+    --shadow:0 14px 34px rgba(39,72,117,.08);
   }
   *{box-sizing:border-box}
   body{
     margin:0;
-    background:linear-gradient(180deg,#f4f6fb 0%, #f5f7fc 52%, #f2f4f9 100%);
+    background:linear-gradient(180deg,#f4f6fb 0%, #f5f7fc 50%, #f2f4f9 100%);
     font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Segoe UI",Arial,sans-serif;
     color:var(--text);
     padding:24px 18px 56px;
@@ -33,7 +33,7 @@
     gap:18px;
   }
 
-  .hero,.card,.visionCard,.modalCard{
+  .hero,.card,.visionCard,.pageFootnote,.modalCard{
     width:100%;
     background:var(--card);
     border:1.5px solid var(--line);
@@ -58,11 +58,12 @@
     background:radial-gradient(circle, rgba(15,102,189,.10) 0%, rgba(15,102,189,.04) 42%, rgba(15,102,189,0) 72%);
     pointer-events:none;
   }
+
   .brand{
     display:inline-flex;
     align-items:center;
     gap:10px;
-    background:var(--soft-blue);
+    background:#eef5fc;
     color:var(--acuvue-blue-deep);
     border:1px solid #d9e6f4;
     border-radius:999px;
@@ -71,6 +72,7 @@
     font-weight:800;
     margin-bottom:14px;
   }
+
   .heroTitle{
     margin:0;
     font-size:clamp(14px,2vw,18px);
@@ -87,63 +89,38 @@
     font-size:.82em;
   }
 
-  .grid{display:flex;flex-direction:column;gap:18px}
-  .card{padding:22px 22px 24px}
   .sliderCard > h3{display:none}
+  .grid{display:flex;flex-direction:column;gap:18px}
+  .card{padding:22px 22px 22px}
+  .card h3,.visionCard h3,.modalCard h3{
+    margin:0 0 12px;
+    font-size:22px;
+    letter-spacing:-.03em;
+    line-height:1.3;
+    color:var(--title);
+  }
 
-  .spec{display:flex;flex-direction:column;gap:16px;margin-bottom:8px}
+  .sliderCard .guide{display:none}
+  .spec{display:flex;flex-direction:column;gap:16px}
   .sliderBlock{display:flex;flex-direction:column;gap:8px}
-  .sliderTop{
-    display:grid;
-    grid-template-columns:1fr auto;
-    gap:14px;
-    align-items:center;
-  }
-  .label{
-    font-size:18px;
-    font-weight:900;
-    color:#5d738f;
-    letter-spacing:-.02em;
-  }
-  .value{
-    font-size:18px;
-    font-weight:900;
-    color:var(--acuvue-blue);
-    min-width:100px;
-    text-align:right;
-    letter-spacing:-.02em;
-  }
+  .sliderTop{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center}
+  .label{font-size:18px;font-weight:900;color:#5d738f}
+  .value{font-size:18px;font-weight:900;color:var(--acuvue-blue);min-width:100px;text-align:right}
   input[type="range"]{width:100%;margin:0}
-  .scale{
-    display:flex;
-    justify-content:space-between;
-    font-size:12px;
-    font-weight:800;
-    color:var(--sub);
-    padding:0 2px;
-  }
+  .scale{display:flex;justify-content:space-between;font-size:12px;font-weight:800;color:var(--sub);padding:0 2px}
 
   .visualStage{display:flex;justify-content:center}
   .visualStack{
-    width:min(100%,580px);
+    width:min(100%,560px);
     display:flex;
     flex-direction:column;
     align-items:center;
     gap:10px;
   }
 
-  .compareArea{
-    width:100%;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:8px;
-    padding-top:4px;
-  }
-
   .eyePanel,.lensPanel{
     position:relative;
-    width:300px;
+    width:270px;
     display:flex;
     justify-content:center;
     margin:0 auto;
@@ -151,10 +128,18 @@
 
   .eyeBase,.lensBase{
     display:block;
-    width:300px;
+    width:270px;
+    object-fit:cover;
     background:#fff;
-    border-radius:999px;
-    box-shadow:0 6px 18px rgba(39,72,117,.05);
+    border-radius:22px;
+  }
+  .eyeBase{
+    height:165px;
+    object-position:center center;
+  }
+  .lensBase{
+    height:160px;
+    object-position:center center;
   }
 
   .overlaySvg{
@@ -165,105 +150,86 @@
     pointer-events:none;
   }
 
-  .toggleWrap{
-    width:min(100%,430px);
-    margin-top:4px;
-    padding:10px 12px;
-    border-radius:26px;
-    background:linear-gradient(180deg,#fbfdff 0%, #f6f9fd 100%);
-    border:1.5px solid #d8e2ee;
-    box-shadow:0 10px 22px rgba(39,72,117,.05);
-  }
-  .toggleRow{
-    width:100%;
+  /* ===== 하단 디자인 재정리 ===== */
+  .controlDock{
+    width:min(100%,520px);
+    margin-top:2px;
     display:flex;
-    justify-content:center;
+    flex-direction:column;
+    gap:10px;
   }
-  .pillToggle{
+
+  .toggleBar{
     width:100%;
-    background:#ffffff;
-    border:1.5px solid #d6e0ec;
-    border-radius:999px;
-    padding:6px;
     display:grid;
-    grid-template-columns:1fr 82px 82px;
+    grid-template-columns:1fr auto auto;
     align-items:center;
-    gap:6px;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.9), 0 8px 18px rgba(32,74,123,.04);
+    gap:8px;
+    padding:8px;
+    border:1.5px solid #d7e2ef;
+    background:linear-gradient(180deg,#fbfdff 0%, #f4f8fc 100%);
+    border-radius:20px;
+    box-shadow:0 8px 18px rgba(33,73,118,.06);
   }
-  .pillLabel{
+  .toggleTitle{
+    padding:0 8px;
     color:var(--acuvue-blue-deep);
     font-weight:900;
-    font-size:13px;
-    text-align:center;
-    letter-spacing:-.02em;
-    padding:0 8px;
-    line-height:1.25;
+    font-size:14px;
+    letter-spacing:-.03em;
+    line-height:1.2;
   }
-  .pillBtn{
+  .modeBtn{
+    min-width:74px;
+    height:40px;
+    padding:0 16px;
     border:none;
-    background:transparent;
-    color:#5a7391;
+    border-radius:14px;
+    background:#eaf1f9;
+    color:#5f7897;
     font-weight:900;
-    border-radius:18px;
-    height:42px;
-    cursor:pointer;
     font-size:13px;
-    letter-spacing:-.02em;
+    cursor:pointer;
     transition:.2s ease;
   }
-  .pillBtn.active{
+  .modeBtn.active{
     background:linear-gradient(180deg,#1970c7 0%, #0d5ea8 100%);
     color:#fff;
     box-shadow:0 8px 16px rgba(21,96,167,.18);
   }
 
   .messageBox{
-    width:min(100%,580px);
-    background:linear-gradient(180deg,#ffffff 0%, #f9fbfe 100%);
+    width:100%;
+    background:linear-gradient(180deg,#ffffff 0%, #fbfcff 100%);
     color:var(--title);
     border:1.5px solid #d8e1ee;
-    border-radius:26px;
-    padding:16px 18px 18px;
+    border-radius:24px;
+    padding:14px 16px;
     text-align:center;
-    box-shadow:0 10px 24px rgba(39,72,117,.05);
-    position:relative;
-    overflow:hidden;
-  }
-  .messageBox::before{
-    content:"";
-    position:absolute;
-    inset:auto -20% -55% auto;
-    width:220px;
-    height:220px;
-    border-radius:50%;
-    background:radial-gradient(circle, rgba(15,102,189,.08) 0%, rgba(15,102,189,0) 70%);
-    pointer-events:none;
+    box-shadow:0 8px 20px rgba(39,72,117,.05);
   }
   .messageTitle{
     margin:0;
-    font-size:15px;
+    font-size:13px;
     line-height:1.55;
     letter-spacing:-.03em;
     font-weight:900;
     color:var(--text);
-    position:relative;
-    z-index:1;
   }
 
   .visionCard{
-    padding:16px 18px;
-    border-radius:28px;
+    padding:12px 14px;
+    border-radius:26px;
   }
   .visionTrigger{
     display:grid;
-    grid-template-columns:1fr 126px;
+    grid-template-columns:1fr 120px;
     align-items:center;
-    gap:14px;
+    gap:12px;
   }
   .visionTrigger h3{
     margin:0 0 4px;
-    font-size:26px;
+    font-size:24px;
     line-height:1.02;
     color:#243d63;
     font-weight:900;
@@ -272,7 +238,7 @@
   .visionTrigger .muted{
     color:#6e7f97;
     font-weight:800;
-    font-size:11px;
+    font-size:10px;
     line-height:1.35;
   }
 
@@ -292,22 +258,34 @@
     color:#fff;
     box-shadow:0 10px 22px rgba(18,97,180,.20);
   }
+
   #openVisionBtn{
-    min-height:74px;
-    border-radius:22px;
-    font-size:14px;
-    line-height:1.35;
-    padding:0 14px;
+    min-height:64px;
+    border-radius:18px;
+    font-size:13px;
+    line-height:1.3;
+    padding:0 12px;
     white-space:normal;
   }
 
+  .muted{
+    color:var(--sub);
+    font-weight:800;
+    font-size:13px;
+    line-height:1.45;
+  }
+
   .pageFootnote{
-    padding:4px 6px 0;
+    padding:4px 8px 0;
     color:#6f7f96;
     font-weight:900;
     font-size:12px;
     line-height:1.45;
     text-align:center;
+    background:transparent;
+    border:none;
+    box-shadow:none;
+    border-radius:0;
   }
 
   .modalBack{
@@ -321,11 +299,7 @@
     z-index:1000;
   }
   .modalBack.open{display:flex}
-  .modalCard{
-    max-width:920px;
-    padding:18px;
-    position:relative;
-  }
+  .modalCard{max-width:920px;padding:18px;position:relative}
   .modalClose{position:absolute;right:16px;top:16px}
   .visionGrid{
     display:grid;
@@ -384,49 +358,51 @@
     body{padding:16px 12px 42px}
     .hero,.card,.visionCard,.modalCard{border-radius:26px}
     .card,.visionCard,.hero{padding:18px}
+    .card h3,.visionCard h3,.modalCard h3{font-size:18px}
     .label,.value{font-size:16px}
     .heroTitle .titleNote{display:block;margin-top:8px;font-size:.9em}
 
-    .eyePanel,.lensPanel{width:250px}
-    .eyeBase,.lensBase{width:250px}
+    .eyePanel,.lensPanel{width:220px}
+    .eyeBase,.lensBase{width:220px}
+    .eyeBase{height:135px}
+    .lensBase{height:130px}
 
-    .toggleWrap{
-      width:min(100%,350px);
-      padding:8px 10px;
-      border-radius:22px;
-    }
-    .pillToggle{
-      grid-template-columns:1fr 70px 70px;
-      padding:6px;
+    .controlDock{width:min(100%,420px);gap:8px}
+    .toggleBar{
+      grid-template-columns:1fr auto auto;
       gap:6px;
+      padding:7px;
+      border-radius:18px;
     }
-    .pillLabel{font-size:11px}
-    .pillBtn{
-      height:38px;
+    .toggleTitle{font-size:12px;padding:0 6px}
+    .modeBtn{
+      min-width:64px;
+      height:36px;
       font-size:12px;
-      border-radius:16px;
+      border-radius:12px;
+      padding:0 12px;
     }
 
     .messageBox{
-      border-radius:24px;
-      padding:14px 14px 16px;
-      width:min(100%,500px);
+      border-radius:22px;
+      padding:12px 12px;
+      width:min(100%,420px);
     }
     .messageTitle{
-      font-size:13px;
+      font-size:12px;
       line-height:1.5;
     }
 
     .visionTrigger{
-      grid-template-columns:1fr 110px;
-      gap:12px;
+      grid-template-columns:1fr 104px;
+      gap:10px;
     }
-    .visionTrigger h3{font-size:22px}
+    .visionTrigger h3{font-size:21px}
     .visionTrigger .muted{font-size:9px}
     #openVisionBtn{
-      min-height:64px;
+      min-height:58px;
       font-size:12px;
-      border-radius:18px;
+      border-radius:16px;
     }
 
     .pageFootnote{
@@ -482,81 +458,31 @@
 
       <div class="visualStage">
         <div class="visualStack">
-          <div class="compareArea">
-            <div class="eyePanel">
-              <img
-                class="eyeBase"
-                src="data:image/svg+xml;utf8,
-                <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 180'>
-                  <defs>
-                    <radialGradient id='iris' cx='50%25' cy='50%25' r='50%25'>
-                      <stop offset='0%25' stop-color='%238a4d16'/>
-                      <stop offset='45%25' stop-color='%23713c12'/>
-                      <stop offset='80%25' stop-color='%2357240c'/>
-                      <stop offset='100%25' stop-color='%23301208'/>
-                    </radialGradient>
-                    <radialGradient id='sclera' cx='50%25' cy='45%25' r='70%25'>
-                      <stop offset='0%25' stop-color='%23ffffff'/>
-                      <stop offset='100%25' stop-color='%23f2ece6'/>
-                    </radialGradient>
-                  </defs>
-                  <rect width='300' height='180' fill='white'/>
-                  <path d='M25 90 C60 25, 240 25, 275 90 C240 155, 60 155, 25 90 Z' fill='url(%23sclera)' stroke='%23ddb9a8' stroke-width='4'/>
-                  <circle cx='150' cy='90' r='56' fill='url(%23iris)'/>
-                  <circle cx='150' cy='90' r='26' fill='%23070b12'/>
-                  <ellipse cx='110' cy='68' rx='22' ry='42' fill='white' opacity='0.55' transform='rotate(18 110 68)'/>
-                  <path d='M25 90 C58 22, 242 22, 275 90' fill='none' stroke='%23d49f8e' stroke-width='6' opacity='0.6'/>
-                  <path d='M25 90 C58 158, 242 158, 275 90' fill='none' stroke='%23d49f8e' stroke-width='6' opacity='0.45'/>
-                  <path d='M18 98 C42 112, 58 116, 76 120' fill='none' stroke='%23f5a4a4' stroke-width='5' opacity='0.55'/>
-                </svg>"
-                alt="동공 이미지">
-              <svg class="overlaySvg" id="eyeOverlay" viewBox="0 0 300 180" preserveAspectRatio="xMidYMid meet"></svg>
-            </div>
-
-            <div class="lensPanel">
-              <img
-                class="lensBase"
-                src="data:image/svg+xml;utf8,
-                <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 180'>
-                  <defs>
-                    <radialGradient id='sclera2' cx='50%25' cy='45%25' r='70%25'>
-                      <stop offset='0%25' stop-color='%23ffffff'/>
-                      <stop offset='100%25' stop-color='%23f2ece6'/>
-                    </radialGradient>
-                    <radialGradient id='zone' cx='50%25' cy='50%25' r='50%25'>
-                      <stop offset='0%25' stop-color='%23222f8d' stop-opacity='0.95'/>
-                      <stop offset='45%25' stop-color='%236e94d8' stop-opacity='0.7'/>
-                      <stop offset='100%25' stop-color='%239dc3f0' stop-opacity='0.05'/>
-                    </radialGradient>
-                  </defs>
-                  <rect width='300' height='180' fill='white'/>
-                  <path d='M25 90 C60 25, 240 25, 275 90 C240 155, 60 155, 25 90 Z' fill='url(%23sclera2)' stroke='%23ddb9a8' stroke-width='4'/>
-                  <circle cx='150' cy='90' r='70' fill='%23f5fbff' stroke='%231870c7' stroke-width='2.5'/>
-                  <circle cx='150' cy='90' r='48' fill='url(%23zone)'/>
-                  <path d='M25 90 C58 22, 242 22, 275 90' fill='none' stroke='%23d49f8e' stroke-width='6' opacity='0.55'/>
-                  <path d='M25 90 C58 158, 242 158, 275 90' fill='none' stroke='%23d49f8e' stroke-width='6' opacity='0.4'/>
-                  <path d='M18 98 C42 112, 58 116, 76 120' fill='none' stroke='%23f5a4a4' stroke-width='5' opacity='0.55'/>
-                </svg>"
-                alt="광학부 이미지">
-              <svg class="overlaySvg" id="lensOverlay" viewBox="0 0 300 180" preserveAspectRatio="xMidYMid meet"></svg>
-            </div>
+          <div class="eyePanel">
+            <!-- 같은 폴더에 eye-photo.jpg 넣으면 됨 -->
+            <img class="eyeBase" src="eye-photo.jpg" alt="동공 이미지">
+            <svg class="overlaySvg" id="eyeOverlay" viewBox="0 0 270 165" preserveAspectRatio="xMidYMid meet"></svg>
           </div>
 
-          <div class="toggleWrap">
-            <div class="toggleRow">
-              <div class="pillToggle">
-                <div class="pillLabel">183개 동공 크기별 광학부 디자인</div>
-                <button class="pillBtn active" id="onBtn" type="button">ON</button>
-                <button class="pillBtn" id="offBtn" type="button">OFF</button>
-              </div>
-            </div>
+          <div class="lensPanel">
+            <!-- 같은 폴더에 lens-photo.jpg 넣으면 됨 -->
+            <img class="lensBase" src="lens-photo.jpg" alt="광학부 이미지">
+            <svg class="overlaySvg" id="lensOverlay" viewBox="0 0 270 160" preserveAspectRatio="xMidYMid meet"></svg>
           </div>
 
-          <div class="messageBox">
-            <p class="messageTitle">
-              아큐브 멀티포컬은 183개 동공 크기별 디자인으로<br>
-              다양한 거리에서 선명한 시야와 편안함을 제공합니다
-            </p>
+          <div class="controlDock">
+            <div class="toggleBar">
+              <div class="toggleTitle">183개 동공 크기별 광학부</div>
+              <button class="modeBtn active" id="onBtn" type="button">ON</button>
+              <button class="modeBtn" id="offBtn" type="button">OFF</button>
+            </div>
+
+            <div class="messageBox">
+              <p class="messageTitle">
+                아큐브 멀티포컬은 183개 동공 크기별 디자인으로<br>
+                다양한 거리에서 선명한 시야와 편안함을 제공합니다
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -625,7 +551,7 @@
   const explainConclusion = document.getElementById('explainConclusion');
   const camBtn = document.getElementById('camBtn');
 
-  // OFF일 때는 5mm 고정
+  // OFF일 때 광학부 고정 5mm
   const fixedOffOpticZone = 5.0;
   let designMode = 'on';
 
@@ -634,30 +560,49 @@
   function formatSphere(v) { return `${v > 0 ? '+' : ''}${v.toFixed(2)}`; }
   function formatAdd(idx) { return ['Low','Mid','High'][idx]; }
 
-  // 조건:
-  // -9 / Low  = 7.0mm
-  // +6 / High = 3.0mm
-  // default   = -3 / Mid
+  /*
+    조건
+    -9 / Low = 7mm
+    +6 / High = 3mm
+    기본값 -3 / Mid
+    ON = 광학부 = 동공
+    OFF = 광학부 5mm 고정
+  */
   function calcPupilMM() {
     const sphere = getSphereValue();   // -9 ~ +6
-    const addIdx = getAddIndex();      // 0,1,2
+    const addIdx = getAddIndex();      // 0 Low / 1 Mid / 2 High
 
-    const sphereFactor = (sphere + 9) / 15; // -9 => 0, +6 => 1
-    let pupil = 7 - (sphereFactor * 2) - addIdx;
+    // sphere 정규화: -9 => 0, +6 => 1
+    const sphereT = (sphere + 9) / 15;
 
-    return Math.max(3.0, Math.min(7.0, pupil));
+    // add 영향: Low 0 / Mid 0.5 / High 1
+    const addT = addIdx / 2;
+
+    // 둘 다 동공 축소 방향으로 작용
+    // Low -9 = 7mm / High +6 = 3mm 되도록 선형 조합
+    const combined = (sphereT + addT) / 2;   // 0 ~ 1
+    const pupil = 7 - (combined * 4);        // 7 ~ 3
+
+    return Math.max(3.0, Math.min(7.0, Number(pupil.toFixed(2))));
   }
 
   function calcOpticZoneMM(pupilMM) {
     return designMode === 'on' ? pupilMM : fixedOffOpticZone;
   }
 
-  // 눈 이미지와 렌즈 이미지에서 같은 mm가 최대한 같아 보이도록 동일한 환산 사용
-  function mmToRadius(mm) {
-    const minMM = 3.0, maxMM = 7.0;
-    const minR = 28, maxR = 74;
-    const t = Math.max(0, Math.min(1, (mm - minMM) / (maxMM - minMM)));
-    return Math.round(minR + (maxR - minR) * t);
+  /*
+    12mm 전체 렌즈/홍채 기준 비율
+    12mm diameter -> 120px diameter 로 가정
+    pupil/optic diameter mm 값을 그대로 비율 매핑
+  */
+  function mmToDiameterPx(mm) {
+    return (mm / 12) * 120;
+  }
+  function mmToEyeRadius(mm) {
+    return Math.round(mmToDiameterPx(mm) / 2);
+  }
+  function mmToLensRadius(mm) {
+    return Math.round(mmToDiameterPx(mm) / 2);
   }
 
   function setExplain(tags, conclusion) {
@@ -678,83 +623,82 @@
 
     if (designMode === 'on') {
       setExplain(
-        ['광학부 사이즈=동공사이즈', '점선 폭 일치'],
-        '183개 동공 크기별 광학부 디자인 ON에서는 동공 크기에 맞춰 광학부가 함께 변합니다.'
+        ['광학부 사이즈≈동공사이즈', '전반적 선명'],
+        '183개 동공 사이즈별 광학부가 동공 크기에 맞춰 변하며 보다 선명한 시야를 제공합니다.'
       );
       return;
     }
 
-    if (absDiff < 0.2) {
+    if (absDiff < 0.25) {
       setExplain(
-        ['광학부 5mm 고정', '시야 영향 적음'],
-        'OFF 상태이지만 현재 동공과 광학부 차이가 크지 않아 비교적 영향이 적습니다.'
+        ['광학부 사이즈≈동공사이즈', '시야 영향 적음'],
+        '동공사이즈와 광학부가 유사하여 시야 영향이 비교적 적습니다.'
       );
       return;
     }
 
-    if (diff > 0) {
-      screen.classList.add('mask-periphery','fishbowl');
-      setExplain(
-        ['동공사이즈 > 광학부사이즈', '주변부 흐림 가능'],
-        'OFF에서는 광학부가 5mm로 고정되어 동공이 더 크면 주변부 흐림이나 번짐이 발생할 수 있습니다.'
-      );
-    } else {
+    if (diff < 0) {
       screen.classList.add('mask-center');
       setExplain(
-        ['광학부사이즈 > 동공사이즈', '중심부 흐림 가능'],
-        'OFF에서는 광학부가 5mm로 고정되어 동공이 더 작으면 상대적인 중심부 흐림이 발생할 수 있습니다.'
+        ['광학부 사이즈>동공사이즈', '중심부 흐림 가능'],
+        '광학부가 더 커 중심부에서 상대적인 흐림이 발생할 수 있습니다.'
+      );
+    } else {
+      screen.classList.add('mask-periphery','fishbowl');
+      setExplain(
+        ['동공사이즈>광학부사이즈', '주변부 흐림 가능'],
+        '동공이 더 커 주변부에서 흐림이나 번짐이 발생할 수 있습니다.'
       );
     }
   }
 
-  function drawEyeOverlay(pupilMM) {
-    const pupilR = mmToRadius(pupilMM);
+  function drawEyeOverlay(pupilMM, opticMM) {
+    const pupilR = mmToEyeRadius(pupilMM);
+    const opticR = mmToEyeRadius(opticMM);
 
-    const centerX = 150;
-    const centerY = 90;
+    const centerX = 135;
+    const centerY = 82;
 
-    // 점선은 동공사이즈 기준선
-    const guideLeft = centerX - pupilR;
-    const guideRight = centerX + pupilR;
+    // 점선 = 동공 기준선
+    const pupilLeft = centerX - pupilR;
+    const pupilRight = centerX + pupilR;
 
     eyeOverlay.innerHTML = `
-      <line x1="${guideLeft}" y1="102" x2="${guideLeft}" y2="176"
-            stroke="#13689a" stroke-width="2.8" stroke-dasharray="9 8" />
-      <line x1="${guideRight}" y1="102" x2="${guideRight}" y2="176"
-            stroke="#13689a" stroke-width="2.8" stroke-dasharray="9 8" />
+      <line x1="${pupilLeft}" y1="18" x2="${pupilLeft}" y2="160"
+            stroke="#0f66bd" stroke-width="2.1" stroke-dasharray="7 6" />
+      <line x1="${pupilRight}" y1="18" x2="${pupilRight}" y2="160"
+            stroke="#0f66bd" stroke-width="2.1" stroke-dasharray="7 6" />
+
+      <circle cx="${centerX}" cy="${centerY}" r="${opticR}"
+              fill="none" stroke="rgba(15,102,189,0.82)" stroke-width="2.2"/>
+
       <circle cx="${centerX}" cy="${centerY}" r="${pupilR}"
-              fill="rgba(5,8,16,0.98)"
-              stroke="#0f6cc7" stroke-width="2.8"/>
+              fill="none" stroke="#0f66bd" stroke-width="2.2" stroke-dasharray="7 6"/>
     `;
   }
 
   function drawLensOverlay(pupilMM, opticMM) {
-    const pupilR = mmToRadius(pupilMM);   // 점선 기준
-    const opticR = mmToRadius(opticMM);   // 실제 광학부
+    const pupilR = mmToLensRadius(pupilMM);
+    const opticR = mmToLensRadius(opticMM);
 
-    const centerX = 150;
-    const centerY = 90;
+    const centerX = 135;
+    const centerY = 80;
 
-    // 점선은 항상 "동공사이즈 기준"
-    const guideLeft = centerX - pupilR;
-    const guideRight = centerX + pupilR;
+    // 점선 = 동공 기준선
+    const pupilLeft = centerX - pupilR;
+    const pupilRight = centerX + pupilR;
 
-    // OFF일 때 광학부가 더 크거나 작으면 점선과 안 맞아야 함
     lensOverlay.innerHTML = `
-      <line x1="${guideLeft}" y1="0" x2="${guideLeft}" y2="104"
-            stroke="#13689a" stroke-width="2.8" stroke-dasharray="9 8" />
-      <line x1="${guideRight}" y1="0" x2="${guideRight}" y2="104"
-            stroke="#13689a" stroke-width="2.8" stroke-dasharray="9 8" />
+      <line x1="${pupilLeft}" y1="12" x2="${pupilLeft}" y2="148"
+            stroke="#0f66bd" stroke-width="2.1" stroke-dasharray="7 6" />
+      <line x1="${pupilRight}" y1="12" x2="${pupilRight}" y2="148"
+            stroke="#0f66bd" stroke-width="2.1" stroke-dasharray="7 6" />
 
       <circle cx="${centerX}" cy="${centerY}" r="${opticR}"
-              fill="rgba(132,188,238,0.14)"
-              stroke="#1571c7" stroke-width="2.8"/>
-      <circle cx="${centerX}" cy="${centerY}" r="${Math.round(opticR*0.72)}"
-              fill="rgba(132,188,238,0.12)"/>
-      <circle cx="${centerX}" cy="${centerY}" r="${Math.round(opticR*0.42)}"
-              fill="rgba(90,124,212,0.34)"/>
-      <circle cx="${centerX}" cy="${centerY}" r="${Math.round(opticR*0.18)}"
-              fill="rgba(37,45,145,0.72)"/>
+              fill="none" stroke="#1571c7" stroke-width="2.2"/>
+
+      <circle cx="${centerX}" cy="${centerY}" r="${pupilR}"
+              fill="none" stroke="#0f66bd" stroke-width="2.2" stroke-dasharray="7 6"/>
     `;
   }
 
@@ -765,7 +709,7 @@
     sphereValue.textContent = formatSphere(getSphereValue());
     addValue.textContent = formatAdd(getAddIndex());
 
-    drawEyeOverlay(pupilMM);
+    drawEyeOverlay(pupilMM, opticMM);
     drawLensOverlay(pupilMM, opticMM);
     updateVisionEffect(pupilMM, opticMM);
 
@@ -792,10 +736,14 @@
 
   closeVisionBtn.addEventListener('click', () => {
     visionModal.classList.remove('open');
+    stopCamera();
   });
 
   visionModal.addEventListener('click', (e) => {
-    if (e.target === visionModal) visionModal.classList.remove('open');
+    if (e.target === visionModal) {
+      visionModal.classList.remove('open');
+      stopCamera();
+    }
   });
 
   let stream = null;
