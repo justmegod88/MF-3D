@@ -115,7 +115,7 @@
     display:flex;
     flex-direction:column;
     align-items:center;
-    gap:14px;
+    gap:8px;
   }
 
   .eyePanel,.lensPanel{
@@ -127,29 +127,30 @@
   .eyeBase,.lensBase{display:block;max-width:100%;height:auto}
   .overlaySvg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 
+  /* 하단 영역 전체 축소 */
   .toggleRow{
-    width:min(100%,500px);
+    width:min(100%,360px);
     display:flex;
     justify-content:center;
-    margin-top:6px;
-    margin-bottom:12px;
+    margin-top:2px;
+    margin-bottom:6px;
   }
   .pillToggle{
     width:100%;
     background:#f8fbff;
     border:1.5px solid #d6e0ec;
     border-radius:999px;
-    padding:10px;
+    padding:6px;
     display:grid;
-    grid-template-columns:1fr 110px 110px;
+    grid-template-columns:1fr 78px 78px;
     align-items:center;
-    gap:10px;
+    gap:6px;
     box-shadow:0 6px 18px rgba(32,74,123,.05);
   }
   .pillLabel{
     color:var(--acuvue-blue-deep);
     font-weight:900;
-    font-size:18px;
+    font-size:13px;
     text-align:center;
     letter-spacing:-.02em;
   }
@@ -158,66 +159,66 @@
     background:transparent;
     color:#5a7391;
     font-weight:900;
-    border-radius:24px;
-    height:60px;
+    border-radius:18px;
+    height:42px;
     cursor:pointer;
-    font-size:18px;
+    font-size:13px;
     letter-spacing:-.02em;
     transition:.2s ease;
   }
   .pillBtn.active{
     background:linear-gradient(180deg,#1970c7 0%, #0d5ea8 100%);
     color:#fff;
-    box-shadow:0 10px 20px rgba(21,96,167,.22);
+    box-shadow:0 8px 16px rgba(21,96,167,.18);
   }
 
   .messageBox{
-    width:min(100%,560px);
+    width:min(100%,520px);
     background:#fff;
     color:var(--title);
     border:1.5px solid #d8e1ee;
-    border-radius:44px;
-    padding:34px 28px 36px;
+    border-radius:28px;
+    padding:18px 18px 20px;
     text-align:center;
-    box-shadow:0 12px 30px rgba(39,72,117,.08);
+    box-shadow:0 10px 24px rgba(39,72,117,.06);
   }
   .messageBadge{
     display:inline-flex;
     align-items:center;
     justify-content:center;
-    min-height:52px;
-    padding:0 22px;
+    min-height:34px;
+    padding:0 16px;
     border-radius:999px;
     background:#eaf2fb;
     color:var(--acuvue-blue-deep);
-    font-size:18px;
+    font-size:11px;
     font-weight:900;
-    letter-spacing:-.02em;
-    margin-bottom:18px;
+    letter-spacing:-.01em;
+    margin-bottom:10px;
   }
   .messageTitle{
     margin:0;
-    font-size:28px;
-    line-height:1.42;
-    letter-spacing:-.04em;
+    font-size:14px;
+    line-height:1.55;
+    letter-spacing:-.03em;
     font-weight:900;
     color:var(--text);
   }
 
   .visionCard{
-    padding:28px 24px;
-    border-radius:34px;
+    padding:16px 18px;
+    border-radius:28px;
   }
   .visionTrigger{
     display:grid;
-    grid-template-columns:1fr 180px;
+    grid-template-columns:1fr 126px;
     align-items:center;
-    gap:20px;
+    gap:14px;
   }
   .visionTrigger h3{
-    margin:0 0 8px;
-    font-size:34px;
-    line-height:1.05;
+    margin:0 0 4px;
+    font-size:26px;
+    line-height:1.02;
     color:#243d63;
     font-weight:900;
     letter-spacing:-.04em;
@@ -225,7 +226,7 @@
   .visionTrigger .muted{
     color:#6e7f97;
     font-weight:800;
-    font-size:18px;
+    font-size:10px;
     line-height:1.35;
   }
 
@@ -247,11 +248,11 @@
   }
 
   #openVisionBtn{
-    min-height:108px;
-    border-radius:26px;
-    font-size:22px;
-    line-height:1.25;
-    padding:0 20px;
+    min-height:74px;
+    border-radius:22px;
+    font-size:14px;
+    line-height:1.35;
+    padding:0 14px;
     white-space:normal;
   }
 
@@ -263,10 +264,10 @@
   }
 
   .pageFootnote{
-    padding:10px 8px 0;
+    padding:6px 8px 0;
     color:#6f7f96;
     font-weight:900;
-    font-size:18px;
+    font-size:12px;
     line-height:1.45;
     text-align:center;
     background:transparent;
@@ -349,48 +350,52 @@
     .label,.value{font-size:16px}
     .heroTitle .titleNote{display:block;margin-top:8px;font-size:.9em}
 
-    .pillToggle{
-      grid-template-columns:1fr 88px 88px;
-      padding:8px;
-      gap:8px;
+    .toggleRow{
+      width:min(100%,320px);
     }
-    .pillLabel{font-size:16px}
+    .pillToggle{
+      grid-template-columns:1fr 70px 70px;
+      padding:6px;
+      gap:6px;
+    }
+    .pillLabel{font-size:12px}
     .pillBtn{
-      height:52px;
-      font-size:16px;
-      border-radius:20px;
+      height:38px;
+      font-size:12px;
+      border-radius:16px;
     }
 
     .messageBox{
-      border-radius:34px;
-      padding:26px 18px 28px;
+      border-radius:26px;
+      padding:16px 14px 18px;
+      width:min(100%,480px);
     }
     .messageBadge{
-      font-size:15px;
-      min-height:44px;
-      padding:0 16px;
-      margin-bottom:14px;
+      font-size:10px;
+      min-height:30px;
+      padding:0 14px;
+      margin-bottom:8px;
     }
     .messageTitle{
-      font-size:25px;
-      line-height:1.38;
+      font-size:12px;
+      line-height:1.5;
     }
 
     .visionTrigger{
-      grid-template-columns:1fr 160px;
-      gap:14px;
+      grid-template-columns:1fr 110px;
+      gap:12px;
     }
-    .visionTrigger h3{font-size:28px}
-    .visionTrigger .muted{font-size:14px}
+    .visionTrigger h3{font-size:22px}
+    .visionTrigger .muted{font-size:9px}
     #openVisionBtn{
-      min-height:86px;
-      font-size:16px;
-      border-radius:22px;
+      min-height:64px;
+      font-size:12px;
+      border-radius:18px;
     }
 
     .pageFootnote{
-      font-size:15px;
-      padding-top:4px;
+      font-size:11px;
+      padding-top:2px;
     }
 
     .visionGrid{grid-template-columns:1fr}
@@ -445,7 +450,7 @@
           </div>
 
           <div class="lensPanel">
-            <img class="lensBase" src="data:image/png;base64,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" alt="광학부 이미지">
+            <img class="lensBase" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANcAAACgCAIAAAAQOG6bAACgK0lEQVR4nOz9WdQt2XEeiH0RsXdmnuEf71zDvTUXCoWRBEEMJABCFCmSmmjRslq9tPzQbbtf/NhreS0/9JMf/OBXL4/t1e5ekppNUeIgSpxEERQAggQxF2oebt1bdx7+6QyZe0eEH3bmP9wJVQBkwJR33fXX+c+fJ0/mztixI774IoLcHf//AQBwBxFc4Q4WADBVFun/SgBAMABwPvJBOnhNh98HgPIBAGAYHf7t3oMBO/SzPwk5QIADtP9XU1PnugMuz/z/9H/9f3712y/9N/+7//pvPHuqcTgURNR/y3DNNJytf/N+1/D/7RF+1BfwH3H4wSM/Ihx3yNCRY8yJQExFsDgQXAGBg8oR5VkWiRweKQ2yAhx+zP0BvRSTHRLIOwbf61cu129gB4jAMCKUk7hlYhKWDDhQBapYYO5Zy4epHGrGPJyccK9v+bEYf52l8L0NAsxBBMAJS8f23owJ65NJdfj5UZEkPvTrfR6nDz/Lx51BjO+tC49c0b32KQZAzPCyMlxAFYFztuUizWa99svOgYioaM0fK5m7e/wnJoV3a8FBwry8JgDogLdvzP6Hf/GbgP3nv/ZrTxyfRNo/1gAnKEAgLpuj3+N8APhABA++436aqYz93ba/WnIIwanIGw8ncVAAFKAAJ9CI8KGnnmjns81J7K+GBQA9SAH/GI3/xKTwjkHAYX1DBCC7OXEH/s5Lby41/e2/k/cfowMAEwzwI587uhH3wvQANXnvYYd+Hnxff9piERrvXydI3JWICD4O9Mt/47Of+ZlPnDg+KQYAl1szIz5kWQIgM0B+zFTjX2cppLvn+qgGOqzDDGCYwwNgQB1r5kCOlK2oSD2QQhYYvLgztu+2EJED5iZ07/246ju3V93Vcr4h5/30ADHI3YgbBoFyEiBwQ9f6sRCAYgwl0YiWsT0O/HTu4yC3zfXWh308f/wjGX2cpfPA45E84ALg7EQFERo5JwyHEdrHs1HxwOQEexIqHcxRBAlHvYsu+8deDDwoAEJANG3oZPChi7mXRHQARDb+ChAFYfwb0XwMccnUZnuFKxDCv2B2cvbgz/bHmRhTuYR78OI2/1lJ4dJvcf6OIx/BAixyZEztczQMzqChG7zSbZSYQnOE6qCsrT3rY0cvzLSfUlEVo2P/2h8EB5P6g8g6Gq6Hif++bff2FmRnxIOZwNYUTS3/9QuVPAvdemEEOFxAx3OAOJmdi3z8jgB9LP+WvtRTeZ+zLH7CPwIFciYRYADOAGFUdBZ7aBRwwI6GA3CsVKGDwflMldygBBnKBorNeCkzh7O7q5E4SGUymMDMAIQQiKiqwKGIOESIgghngLIP9SQS4EIMcjoDBP9YEITA7YAQF1KkpYssY0KQ7dmT+MfSa/1ORwnu4sb0wEXx4TuYEAjMDlWAUA6y1lCIB2WEdGMiKtES38G7uaZlSSl2nqlCQG6OIkDEzESuxuhhEQWq8TACLu6oqgALkmefZbNZ1LYDJZLS2tjaZTOomxhhhGqRCrMAMiYgBxECGlc3aIWV39g588fbulWs3N1ZXnzuzCc3qJiEAoAGvvHO8Z+fpP+L4T0UK7xrFdLPewXXADOwwg3tFgu32JC9upK1L3/zS12+fn5A2k1hXErrWU+tQd3VXA7VJF/OOuBqvrMZQO2GxaLNq27azZTtrc5dyVkrqnbEacu5SSmZG7ERkltu2dbeqqlZWJysrK03T1HWsQpyOx009bpqxSCBCVVVSCQCzDMsBNl6ZhmbEoymYv/2d7/x3v/mvP/fpTz/zq78UyHuTEsHdiQ62+QLG/7jBN3+tpfA+xngBOPonYQZYr+Fme7acdWmxWCx2bu08Tbdn6fI3/uX/44LEsw+deuYD7z977pEVEddEziZhSTGHepGrq3t6c69tfWvW2TxTNnPAXM0yEVVVXYVIwrGKFCTG2MQoIgByzqqKrlPVrHo525Utzbk1WwCA3zIDc5hU1cbK9Nj6ZNyQ6OLKhdd3b16Wbnbm5ImzTz7+0BNP08qxretXLt7avXhrZlacqAyqUIIoTg+YjR+H8f8TUvge4g1HxmDzYR9wdgcMqjBF1/li1s0W7WK2mM3TcuazHU9t1s5dU5sfqnR3Gi7e2p7vLS63M4mBKJ46daqpJ5lk3tnVndnlG5eu3p7ttCb1erN+LEzXm/XpeHVtPB6vrk2n09FkPG5iIJiqgt3dAGLmYhGWwRyYmSBERESqurc3n81m82W3vb2zc3trMZ9f21u8c/363s7Nxfb1duc25dnjp4+t5rBI1e3dbjm7uWyVQr29u3Pz2pU12+OauBqRjGMzQvG3is/lvA/O38c6fNBs3+Xv3XO8573+RymFd9/SvYIQxZQubijf4XmiB9G8h1mIQPAD/MR6m88d7sgtljtYLrrt2zcuX9y7cd01MwcGCbm4CVEIAUzZWYI8dPLE9q3rs5tbW0u7udttv3nrKl1b2xn7yPbavLW311T1ysqxE8++75ljmyur66PpZDweV01dFO1AXGgFHQCIOxNgRELkh/0SlAP6u6bAXq/S5sq4klX3Y0aUOt3Zm+3tznd2dre3d69cunzp0sU39va2bsUro26j213b2NjL0d272daty2/m7na33Lty7caN3aVL9dDpU8dPnjj50KPT1Q3ICFUN8h4pgrkPoI4PsRYHqFwYE/l+wMkJBisG7YFtfRgAojuA93criz9KKTy6pAz3xJnL2u3j+vsTNuAbPWugSF/5g5FacSrhirxE21m7bPf29rZvLLdu5MUup3Z+e2u2c9tyDiGMx+NqMqqqqo6NQVmqSmJrLZqVlVNPrLXNTb+8tT3b3farF7dXfWv9oekjjz/3gXPnNlamlXCsJBA5EpNHZpHMcGJnUD9K5JdIApVnTwNesy+Ih5lN7nB3GHJemCoRB6KVab2+vup0NmUDxWzY2dl5/fXXL77z9hsvven+2q35Iqnd2p795XdebnYu377yzrXLl25sbUsM08lodW3jxJmHn3v+w88++9zGidOoAkYj+D5aGYfnwQNsCvTY+4BGud075MJ3R7vfs9NDP0pm16AMHQbYgVA6H0ZZfdAqDKMSlaJ9aeRsisK+ciftQAzPSC12dvZu3Vq+cv7p3ft9VG9Zd7o5O9k2k4dOrXy+vXr7kPue0+2eT2YX9nb2lq0aKvrK3/8h3/ot3/7d/7k7/7u25/8wlf+6O/88W9de+ONnfX10G1v7vL8zL3ue+1uEYT55M5n2l3ZbGqMD9xj6A3a79T5xG2q/2dMPlhD63laVJkrdPnupKSNly8WmVdl6UXvGMGvkq7WKd2B+xjA5we/OAueGxA6cocfJ6g2+0aD09PT7/4xS/8xv/4F77wB3/wlVdeqQVQEMKZt7NwK1BpqfZjF+ev3b/+nVvXb3z7u7/JWm1mA1eAeM/azV7AT7P0iXnujl6U3p0QaPytz2nT7/fd2IvrJwgh8y4XXbvd7haL8Yuvf/3m1Vdc02ANpJQREdE5Y2Yg3k4nL720+MSD29t33v/8N3/2M5/7jVe/8jWv/t7f/dsPHz3aNqUaQhKzBzMwRuQBMO59Tw7jOG42aSSeWfLY/5N0yYJ4R1Q97r+HfIV03GHH4bsTlvU7huGghBAaV0xOzxut3q/r2pp2d3evr6+MppPZfP7xj39c1dVDDz300EMPPfTQQw899NBDDz300EMPPfTQQw899NBDDz300EMPPfTQQw899NBDDz300EMPPfTQQw899NBDD/0j/w/N6n9/8u6TqgAAAABJRU5ErkJggg==" alt="광학부 이미지">
             <svg class="overlaySvg" id="lensOverlay" viewBox="0 0 270 160" preserveAspectRatio="xMidYMid meet"></svg>
           </div>
 
