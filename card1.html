@@ -269,17 +269,19 @@
   .messageBox{
     width:min(100%,520px);
     border-radius:28px;
-    background:linear-gradient(180deg,#f8fbff 0%, #f5f8fd 100%);
-    border:1.5px solid #dbe4ef;
-    box-shadow:0 10px 24px rgba(36,68,110,.06);
-    padding:18px 18px 20px;
+    background:linear-gradient(180deg,#f4f8ff 0%, #edf4ff 100%);
+    border:1.5px solid #d7e2f1;
+    box-shadow:
+      0 10px 24px rgba(36,68,110,.06),
+      inset 0 1px 0 rgba(255,255,255,.95);
+    padding:18px 20px 20px;
     text-align:center;
   }
 
   .messageTitle{
     margin:0;
-    font-size:21px;
-    line-height:1.55;
+    font-size:22px;
+    line-height:1.48;
     font-weight:900;
     color:var(--text);
     letter-spacing:-.035em;
@@ -506,11 +508,12 @@
       width:min(100%,100%);
       border-radius:24px;
       padding:16px 14px 18px;
+      background:linear-gradient(180deg,#f3f8ff 0%, #ebf3ff 100%);
     }
 
     .messageTitle{
-      font-size:12px;
-      line-height:1.5;
+      font-size:13px;
+      line-height:1.48;
     }
 
     .visionTrigger{
@@ -714,7 +717,6 @@
 
     const sphereNorm = (sphere - (-9)) / 15;
     const addNorm = addIdx / 2;
-
     const combined = (sphereNorm + addNorm) / 2;
     const pupil = MAX_PUPIL_MM - (combined * (MAX_PUPIL_MM - MIN_PUPIL_MM));
 
@@ -790,9 +792,9 @@
 
     eyeOverlay.innerHTML = `
       <line x1="${pupilLeft}" y1="${centerY + 6}" x2="${pupilLeft}" y2="205"
-            stroke="#15679a" stroke-width="3" stroke-dasharray="10 9" />
+            stroke="#15679c" stroke-width="3" stroke-dasharray="10 9" />
       <line x1="${pupilRight}" y1="${centerY + 6}" x2="${pupilRight}" y2="205"
-            stroke="#15679a" stroke-width="3" stroke-dasharray="10 9" />
+            stroke="#15679c" stroke-width="3" stroke-dasharray="10 9" />
 
       <circle cx="${centerX}" cy="${centerY}" r="${pupilR}"
               fill="rgba(5,8,18,0.92)" stroke="#0d62b6" stroke-width="3"></circle>
@@ -811,25 +813,41 @@
 
     const pupilLeft = centerX - pupilR;
     const pupilRight = centerX + pupilR;
-    const gradId = `opticGrad-${designMode}-${Math.round(opticR * 10)}`;
 
     lensOverlay.innerHTML = `
       <defs>
-        <radialGradient id="${gradId}" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="rgba(110,130,210,0.38)"></stop>
-          <stop offset="45%" stop-color="rgba(150,175,235,0.28)"></stop>
-          <stop offset="75%" stop-color="rgba(190,215,245,0.22)"></stop>
-          <stop offset="100%" stop-color="rgba(200,235,255,0.35)"></stop>
+        <radialGradient id="opticCoreGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="rgba(85,95,196,0.62)"></stop>
+          <stop offset="78%" stop-color="rgba(105,118,210,0.46)"></stop>
+          <stop offset="100%" stop-color="rgba(112,124,214,0.34)"></stop>
+        </radialGradient>
+
+        <radialGradient id="opticMidGrad" cx="50%" cy="50%" r="52%">
+          <stop offset="0%" stop-color="rgba(138,164,233,0.42)"></stop>
+          <stop offset="84%" stop-color="rgba(152,181,239,0.28)"></stop>
+          <stop offset="100%" stop-color="rgba(160,188,242,0.18)"></stop>
+        </radialGradient>
+
+        <radialGradient id="opticOuterGrad" cx="50%" cy="50%" r="54%">
+          <stop offset="0%" stop-color="rgba(193,220,251,0.26)"></stop>
+          <stop offset="86%" stop-color="rgba(202,226,253,0.18)"></stop>
+          <stop offset="100%" stop-color="rgba(208,230,255,0.12)"></stop>
         </radialGradient>
       </defs>
 
       <line x1="${pupilLeft}" y1="15" x2="${pupilLeft}" y2="${centerY + 4}"
-            stroke="#15679a" stroke-width="3" stroke-dasharray="10 9" />
+            stroke="#15679c" stroke-width="3" stroke-dasharray="10 9" />
       <line x1="${pupilRight}" y1="15" x2="${pupilRight}" y2="${centerY + 4}"
-            stroke="#15679a" stroke-width="3" stroke-dasharray="10 9" />
+            stroke="#15679c" stroke-width="3" stroke-dasharray="10 9" />
 
       <circle cx="${centerX}" cy="${centerY}" r="${opticR}"
-              fill="url(#${gradId})" stroke="#1870c9" stroke-width="2.4"></circle>
+              fill="url(#opticOuterGrad)" stroke="#1870c9" stroke-width="3"></circle>
+
+      <circle cx="${centerX}" cy="${centerY}" r="${opticR * 0.74}"
+              fill="url(#opticMidGrad)"></circle>
+
+      <circle cx="${centerX}" cy="${centerY}" r="${opticR * 0.42}"
+              fill="url(#opticCoreGrad)"></circle>
     `;
   }
 
