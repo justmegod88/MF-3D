@@ -591,12 +591,12 @@
 
         <div class="imagePair">
           <div class="eyePanel">
-            <img class="eyeBase" src="eye-photo.jpg" alt="동공 이미지">
+            <img class="eyeBase" src="eye-photo.png" alt="동공 이미지">
             <svg class="overlaySvg" id="eyeOverlay" viewBox="0 0 400 220" preserveAspectRatio="xMidYMid meet"></svg>
           </div>
 
           <div class="lensPanel">
-            <img class="lensBase" src="lens-photo.jpg" alt="광학부 이미지">
+            <img class="lensBase" src="lens-photo.png" alt="광학부 이미지">
             <svg class="overlaySvg" id="lensOverlay" viewBox="0 0 400 220" preserveAspectRatio="xMidYMid meet"></svg>
           </div>
         </div>
@@ -790,9 +790,9 @@
 
     eyeOverlay.innerHTML = `
       <line x1="${pupilLeft}" y1="${centerY + 6}" x2="${pupilLeft}" y2="205"
-            stroke="#15679c" stroke-width="3" stroke-dasharray="10 9" />
+            stroke="#15679a" stroke-width="3" stroke-dasharray="10 9" />
       <line x1="${pupilRight}" y1="${centerY + 6}" x2="${pupilRight}" y2="205"
-            stroke="#15679c" stroke-width="3" stroke-dasharray="10 9" />
+            stroke="#15679a" stroke-width="3" stroke-dasharray="10 9" />
 
       <circle cx="${centerX}" cy="${centerY}" r="${pupilR}"
               fill="rgba(5,8,18,0.92)" stroke="#0d62b6" stroke-width="3"></circle>
@@ -811,29 +811,25 @@
 
     const pupilLeft = centerX - pupilR;
     const pupilRight = centerX + pupilR;
-
     const gradId = `opticGrad-${designMode}-${Math.round(opticR * 10)}`;
 
     lensOverlay.innerHTML = `
       <defs>
         <radialGradient id="${gradId}" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="rgba(88,105,210,0.52)"></stop>
-          <stop offset="28%" stop-color="rgba(120,140,224,0.40)"></stop>
-          <stop offset="62%" stop-color="rgba(167,195,236,0.26)"></stop>
-          <stop offset="100%" stop-color="rgba(211,232,255,0.10)"></stop>
+          <stop offset="0%" stop-color="rgba(110,130,210,0.38)"></stop>
+          <stop offset="45%" stop-color="rgba(150,175,235,0.28)"></stop>
+          <stop offset="75%" stop-color="rgba(190,215,245,0.22)"></stop>
+          <stop offset="100%" stop-color="rgba(200,235,255,0.35)"></stop>
         </radialGradient>
       </defs>
 
       <line x1="${pupilLeft}" y1="15" x2="${pupilLeft}" y2="${centerY + 4}"
-            stroke="#15679c" stroke-width="3" stroke-dasharray="10 9" />
+            stroke="#15679a" stroke-width="3" stroke-dasharray="10 9" />
       <line x1="${pupilRight}" y1="15" x2="${pupilRight}" y2="${centerY + 4}"
-            stroke="#15679c" stroke-width="3" stroke-dasharray="10 9" />
+            stroke="#15679a" stroke-width="3" stroke-dasharray="10 9" />
 
       <circle cx="${centerX}" cy="${centerY}" r="${opticR}"
-              fill="url(#${gradId})" stroke="#1870c9" stroke-width="3"></circle>
-
-      <circle cx="${centerX}" cy="${centerY}" r="${opticR * 0.16}"
-              fill="rgba(86,95,196,0.62)"></circle>
+              fill="url(#${gradId})" stroke="#1870c9" stroke-width="2.4"></circle>
     `;
   }
 
