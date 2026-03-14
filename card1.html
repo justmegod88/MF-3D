@@ -272,7 +272,7 @@
     background:linear-gradient(180deg,#f8fbff 0%, #f5f8fd 100%);
     border:1.5px solid #dbe4ef;
     box-shadow:0 10px 24px rgba(36,68,110,.06);
-    padding:10px 10px 12px;
+    padding:18px 18px 20px;
     text-align:center;
   }
 
@@ -558,7 +558,7 @@
     <div class="brand">ACUVUE Pupil Optimized Design</div>
     <h1 class="heroTitle">
       <span class="accent">원용도수</span>와 <span class="accent">가입도</span>에 따라 달라지는 <span class="accent">동공</span>.
-       그래서 멀티포컬은 <span class="accent">광학부 사이즈</span>가 중요합니다.
+      그래서 멀티포컬은 <span class="accent">광학부 사이즈</span>가 중요합니다.
       <span class="titleNote">원용도수와 가입도를 조정하여 동공과 광학부 사이즈 변화를 확인해보세요.</span>
     </h1>
   </section>
@@ -591,12 +591,12 @@
 
         <div class="imagePair">
           <div class="eyePanel">
-            <img class="eyeBase" src="eye-photo.png" alt="동공 이미지">
+            <img class="eyeBase" src="eye-photo.jpg" alt="동공 이미지">
             <svg class="overlaySvg" id="eyeOverlay" viewBox="0 0 400 220" preserveAspectRatio="xMidYMid meet"></svg>
           </div>
 
           <div class="lensPanel">
-            <img class="lensBase" src="lens-photo.png" alt="광학부 이미지">
+            <img class="lensBase" src="lens-photo.jpg" alt="광학부 이미지">
             <svg class="overlaySvg" id="lensOverlay" viewBox="0 0 400 220" preserveAspectRatio="xMidYMid meet"></svg>
           </div>
         </div>
@@ -708,21 +708,14 @@
     return ['Low','Mid','High'][idx];
   }
 
-  /* 
-    조건
-    -9 / Low = 7mm
-    +6 / High = 3mm
-    default = -3 / Mid
-    선형 보간
-  */
   function calcPupilMM() {
-    const sphere = getSphereValue();      // -9 ~ +6
-    const addIdx = getAddIndex();         // 0,1,2
+    const sphere = getSphereValue();
+    const addIdx = getAddIndex();
 
-    const sphereNorm = (sphere - (-9)) / 15;  // -9=>0, +6=>1
-    const addNorm = addIdx / 2;               // Low=>0, Mid=>0.5, High=>1
+    const sphereNorm = (sphere - (-9)) / 15;
+    const addNorm = addIdx / 2;
 
-    const combined = (sphereNorm + addNorm) / 2; // 0 ~ 1
+    const combined = (sphereNorm + addNorm) / 2;
     const pupil = MAX_PUPIL_MM - (combined * (MAX_PUPIL_MM - MIN_PUPIL_MM));
 
     return Math.max(MIN_PUPIL_MM, Math.min(MAX_PUPIL_MM, pupil));
@@ -733,14 +726,8 @@
     return OFF_OPTIC_MM;
   }
 
-  /*
-    실제 느낌으로 보이게:
-    전체 홍채/렌즈 외곽을 12mm 기준으로 보고
-    내부 동공/광학부는 3~7mm, 5mm에 맞춰 비례.
-    이미지 안에서 절대 12mm를 넘지 않게 고정.
-  */
   function mmToDisplayRadius(mm) {
-    const irisRadiusPx = 75;   // 화면상 홍채 기준 반지름
+    const irisRadiusPx = 75;
     return (mm / IRIS_MM) * irisRadiusPx;
   }
 
@@ -825,23 +812,28 @@
     const pupilLeft = centerX - pupilR;
     const pupilRight = centerX + pupilR;
 
+    const gradId = `opticGrad-${designMode}-${Math.round(opticR * 10)}`;
+
     lensOverlay.innerHTML = `
+      <defs>
+        <radialGradient id="${gradId}" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="rgba(88,105,210,0.52)"></stop>
+          <stop offset="28%" stop-color="rgba(120,140,224,0.40)"></stop>
+          <stop offset="62%" stop-color="rgba(167,195,236,0.26)"></stop>
+          <stop offset="100%" stop-color="rgba(211,232,255,0.10)"></stop>
+        </radialGradient>
+      </defs>
+
       <line x1="${pupilLeft}" y1="15" x2="${pupilLeft}" y2="${centerY + 4}"
             stroke="#15679c" stroke-width="3" stroke-dasharray="10 9" />
       <line x1="${pupilRight}" y1="15" x2="${pupilRight}" y2="${centerY + 4}"
             stroke="#15679c" stroke-width="3" stroke-dasharray="10 9" />
 
       <circle cx="${centerX}" cy="${centerY}" r="${opticR}"
-              fill="rgba(120,190,255,0.18)" stroke="#1870c9" stroke-width="3"></circle>
+              fill="url(#${gradId})" stroke="#1870c9" stroke-width="3"></circle>
 
-      <circle cx="${centerX}" cy="${centerY}" r="${opticR * 0.66}"
-              fill="rgba(106,164,235,0.24)"></circle>
-
-      <circle cx="${centerX}" cy="${centerY}" r="${opticR * 0.34}"
-              fill="rgba(44,63,170,0.28)"></circle>
-
-      <circle cx="${centerX}" cy="${centerY}" r="${opticR * 0.14}"
-              fill="rgba(42,46,148,0.45)"></circle>
+      <circle cx="${centerX}" cy="${centerY}" r="${opticR * 0.16}"
+              fill="rgba(86,95,196,0.62)"></circle>
     `;
   }
 
