@@ -120,14 +120,35 @@
 
   .eyePanel,.lensPanel{
     position:relative;
-    width:100%;
+    width:270px;
     display:flex;
     justify-content:center;
+    margin:0 auto;
   }
-  .eyeBase,.lensBase{display:block;max-width:100%;height:auto}
-  .overlaySvg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 
-  /* 하단 영역 전체 축소 */
+  .eyeBase,.lensBase{
+    display:block;
+    width:270px;
+    object-fit:cover;
+    background:#fff;
+  }
+  .eyeBase{
+    height:165px;
+    object-position:center top;
+  }
+  .lensBase{
+    height:160px;
+    object-position:center bottom;
+  }
+
+  .overlaySvg{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    pointer-events:none;
+  }
+
   .toggleRow{
     width:min(100%,360px);
     display:flex;
@@ -181,20 +202,6 @@
     padding:18px 18px 20px;
     text-align:center;
     box-shadow:0 10px 24px rgba(39,72,117,.06);
-  }
-  .messageBadge{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    min-height:34px;
-    padding:0 16px;
-    border-radius:999px;
-    background:#eaf2fb;
-    color:var(--acuvue-blue-deep);
-    font-size:11px;
-    font-weight:900;
-    letter-spacing:-.01em;
-    margin-bottom:10px;
   }
   .messageTitle{
     margin:0;
@@ -350,6 +357,15 @@
     .label,.value{font-size:16px}
     .heroTitle .titleNote{display:block;margin-top:8px;font-size:.9em}
 
+    .eyePanel,.lensPanel{
+      width:220px;
+    }
+    .eyeBase,.lensBase{
+      width:220px;
+    }
+    .eyeBase{height:135px}
+    .lensBase{height:130px}
+
     .toggleRow{
       width:min(100%,320px);
     }
@@ -369,12 +385,6 @@
       border-radius:26px;
       padding:16px 14px 18px;
       width:min(100%,480px);
-    }
-    .messageBadge{
-      font-size:10px;
-      min-height:30px;
-      padding:0 14px;
-      margin-bottom:8px;
     }
     .messageTitle{
       font-size:12px;
@@ -445,12 +455,12 @@
       <div class="visualStage">
         <div class="visualStack">
           <div class="eyePanel">
-            <img class="eyeBase" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANcAAAClCAIAAABA9f8oAADWfUlEQVR4nMz9+ZMuWXIdiB1f7o2Ib8nMl2+rvYHe0ABJECDIIQGSxhGpIYcUxYFRRjPKpDH9b7L5laahQJA0kVgb3WA3lgK6G71U1768eltmvsz8loi41931w/3yVVUDaFLSmICwMqu35MslwsOv+/FzjlNE4C/qal+Znv/OAf7UH/z/fjnCADp8bpswT5jG+fJ83FxtLp5ePHm0eXahhNXQ94kZlISJSFUtHEAp5cGDB9///hsPHjx4cvaUmW/duvXKK6+89tprx7duEYeZlVJsLtN+HPfbMhYrc5acVFNKSZRZAbSb7DB3d3czK2WapsnMAHRDLyJBYmaiueu6YCmlCHgqZb+ftvvNdjduxs12N+7r6EGc9Oj4+MVXXn751dfu3LmzWq1yzqqcc2ZmDzLQZhw/evDwg48fb3fjsD6+dXrn/ksvv/Lqay+89Eq3OgIJVAAA/Kk7zs+j4X+7p/Bfv/T/j1/rs1fcRCEAQsAdfvM7YhA+ez8CQIDarwNAEBHgERHuLAIAToePIMADVBAV8x6bbd1spuur8dn5tLliN6vjvN/TbkO7zViK7bX0w6If8jBoFsCFJSKqx7Bc3bl73xzVcHFx8dHHj5+cPfvo40f3798/Pb3dp0xE7s4g5gHEAexLzNV6JNKUVIko3M0MLMXLNJVaaxIdFh2DiMhBDlSrk9l+ez2Vs+K220/zPLv7fj+NZazFx3lfPYIjd8Ot4+OjW6fDcuXuFxcXz549Y2YAKaWIuDi/vLh8dn19/fjp2WazqR6p69bHJ7fv3Hv8uc994cs/9eorr61Obkm/opSp6yGpvf4BOLjd9cP/IgAQBQA3YxEEf/JEDg/HASD4R54X4ZMP+/R1E9/+yZ/8yedCfDoKmQECf+Z7/3PfSv/M7wLwenNbAtO2XJ9dPzt7/OGHzx59HNvtIvHJYrHskiJAHhHzPG92u81uu5vGWutqWHXD0Pc96yEEx3Ec9/N+P56fnz/8+PHDJ4+fPn263e+6rjs6Wp2e3D49PT0+Ps45D7lTVTObp2ncz6LUpaw5UcBhXqNYneeZmZlZCPkmWRIRmLquC9G5lKcX50/Onl5tdtv9bpyncRzHcWRmInJAVVllqiV3w+npac6ZiJjZzTxCRGqt8zxfXV1dXFzsdjsAy+WyG/r79+/fe+HFV1555dVXP3dyestqPD6/OLu85twdndy688KLL7zyysndF7jrEQAJwBHtPT/candnZgQjwhFE1P42IlqMHqLweejRZ57Mp6+/XFH4p76wU3sDfyQLhh1+TmgEKOL5ueGIiGDS8MoEeMHu2p4+vj57uHv27Prswud5Gnd1GmOemLxP2nedCImQ5iQiFrTf7y+vN5vNZr/fg5mFVVMR7h4RdMM4jud5HodBqYvF4mq1GoZh0zS1ViHE9fW15XJZ2wqJb7xw/ebNb73+mSdPnj17dnJ6rJpZCMCNQjNw7r4v7cM9ucm7nNclSklx7JX4sXfevveN7/63P/X3/uBf+L9dt9f+4W9bMx5yLq70u0X7F+VgAAAAAElFTkSuQmCC" alt="동공 이미지">
+            <img class="eyeBase" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAkACQAAD/4QECRXhpZgAATU0AKgAAAAgABwEOAAIAAAALAAAAYgESAAMAAAABAAEAAAEaAAUAAAABAAAAjAEbAAUAAAABAAAAlAExAAIAAAAUAAAAnodpAAQAAAABAAAAsAAAANQAAACQAAAAAQAAAJAAAAABcGFpbnQubmV0IDUuMC4xNQAAkAIAAgAAAA4AAADUAAAAkAMAAQAAAAEAAACQBAACAAAAFAAAAOIAAACgBAABAAAAyQEAAMoEAAEAAACiAgAAcGFpbnQubmV0IDUuMC4xNQAA/9sAQwACAQEBAQECAQEBAgICAgIEAwICAgQIBAMEBQQEBQgGBgYGBQYIBwcHBwYICQsJDAoKCgkJDQ0NDQ0NDQ0NDQ0N/8AAEQgCoAHJAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EAGQQAAIBAgQDBQcHBQgICwAAAAECAAMRBBIhMQVBUQYTImFxgZEUobHR8BQjQlJy0RYzYnKSksLh8XOiM1Nz0hYkJTVTVKRl8gckNlhzgpOj/8QAGgEBAQEBAQEBAAAAAAAAAAAAAAECBAMFBv/EACwRAQEBAAICAQMDBAIDAQAAAAABEQIhAxIxBBNBUQUiYXGBkaGx0TL/2gAMAwEAAhEDEQA/AO4IhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQj/2Q==" alt="동공 이미지">
             <svg class="overlaySvg" id="eyeOverlay" viewBox="0 0 270 165" preserveAspectRatio="xMidYMid meet"></svg>
           </div>
 
           <div class="lensPanel">
-            <img class="lensBase" src="data:image/png;base64,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" alt="광학부 이미지">
+            <img class="lensBase" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAkACQAAD/4QECRXhpZgAATU0AKgAAAAgABwEOAAIAAAALAAAAYgESAAMAAAABAAEAAAEaAAUAAAABAAAAjAEbAAUAAAABAAAAlAExAAIAAAAUAAAAnodpAAQAAAABAAAAsAAAANQAAACQAAAAAQAAAJAAAAABcGFpbnQubmV0IDUuMC4xNQAAkAIAAgAAAA4AAADUAAAAkAMAAQAAAAEAAACQBAACAAAAFAAAAOIAAACgBAABAAAAyQEAAMoEAAEAAACiAgAAcGFpbnQubmV0IDUuMC4xNQAA/9sAQwACAQEBAQECAQEBAgICAgIEAwICAgQIBAMEBQQEBQgGBgYGBQYIBwcHBwYICQsJDAoKCgkJDQ0NDQ0NDQ0NDQ0N/8AAEQgCoAHJAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EAGQQAAIBAgQDBQcHBQgICwAAAAECAAMRBBIhMQVBUQYTImFxgZEUobHR8BQjQlJy0RYzYnKSksLh8XOiM1Nz0hYkJTVTVKRl8gckNlhzgpOj/8QAGgEBAQEBAQEBAAAAAAAAAAAAAAECBAMFBv/EACwRAQEBAAICAQMDBAIDAQAAAAABEQIhAxIxBBNBUQUiYXGBkaGx0TL/2gAMAwEAAhEDEQA/AO4IhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQhQj/2Q==" alt="광학부 이미지">
             <svg class="overlaySvg" id="lensOverlay" viewBox="0 0 270 160" preserveAspectRatio="xMidYMid meet"></svg>
           </div>
 
@@ -463,7 +473,6 @@
           </div>
 
           <div class="messageBox">
-            <div class="messageBadge">Pupil Optimized Design</div>
             <p class="messageTitle">
               아큐브 멀티포컬은 183개 동공 크기별 디자인으로<br>
               다양한 거리에서 선명한 시야와 편안함을 제공합니다
@@ -667,9 +676,9 @@
       ${gapMarkup}
       <line x1="${leftX}" y1="0" x2="${leftX}" y2="92" stroke="#13689a" stroke-width="2.2" stroke-dasharray="8 7" />
       <line x1="${rightX}" y1="0" x2="${rightX}" y2="92" stroke="#13689a" stroke-width="2.2" stroke-dasharray="8 7" />
-      <circle cx="${centerX}" cy="${centerY}" r="${opticR}" fill="rgba(98,176,235,0.26)" stroke="#1571c7" stroke-width="2.2"/>
-      <circle cx="${centerX}" cy="${centerY}" r="${Math.round(opticR*0.66)}" fill="rgba(87,137,232,0.20)"/>
-      <circle cx="${centerX}" cy="${centerY}" r="${Math.round(opticR*0.26)}" fill="rgba(20,39,154,0.42)"/>
+      <circle cx="${centerX}" cy="${centerY}" r="${opticR}" fill="rgba(98,176,235,0.12)" stroke="#1571c7" stroke-width="2.2"/>
+      <circle cx="${centerX}" cy="${centerY}" r="${Math.round(opticR*0.66)}" fill="rgba(87,137,232,0.10)"/>
+      <circle cx="${centerX}" cy="${centerY}" r="${Math.round(opticR*0.26)}" fill="rgba(20,39,154,0.18)"/>
       <circle cx="${centerX}" cy="${centerY}" r="${pupilR}" fill="none" stroke="#13689a" stroke-width="2.2" stroke-dasharray="8 7" />
     `;
   }
