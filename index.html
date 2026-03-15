@@ -290,8 +290,6 @@
           exposure="1.1"
           environment-image="neutral"
           camera-orbit="0deg 75deg 105%"
-          camera-target="0m 0m 0m"
-          field-of-view="30deg"
           min-camera-orbit="auto auto 72%"
           max-camera-orbit="auto auto 170%"
           interaction-prompt="none"
@@ -331,9 +329,23 @@
     const card1 = document.getElementById('card1');
     const powermapPanel = document.getElementById('powermapPanel');
 
-    const DEFAULT_CAMERA_ORBIT = '0deg 75deg 105%';
-    const DEFAULT_CAMERA_TARGET = '0m 0m 0m';
-    const DEFAULT_FIELD_OF_VIEW = '30deg';
+    let initialCameraOrbit = null;
+    let initialCameraTarget = null;
+    let initialFieldOfView = null;
+
+    function saveInitialView() {
+      initialCameraOrbit = viewer.getCameraOrbit();
+      initialCameraTarget = viewer.getCameraTarget();
+      initialFieldOfView = viewer.fieldOfView;
+    }
+
+    viewer.addEventListener('load', () => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          saveInitialView();
+        });
+      });
+    });
 
     function setMode(mode){
       transparentBtn.classList.toggle('active', mode === 'transparent');
@@ -343,9 +355,10 @@
     }
 
     function resetViewer(){
-      viewer.cameraOrbit = DEFAULT_CAMERA_ORBIT;
-      viewer.cameraTarget = DEFAULT_CAMERA_TARGET;
-      viewer.fieldOfView = DEFAULT_FIELD_OF_VIEW;
+      if (!initialCameraOrbit || !initialCameraTarget || !initialFieldOfView) return;
+      viewer.cameraOrbit = `${initialCameraOrbit.theta}rad ${initialCameraOrbit.phi}rad ${initialCameraOrbit.radius}m`;
+      viewer.cameraTarget = `${initialCameraTarget.x}m ${initialCameraTarget.y}m ${initialCameraTarget.z}m`;
+      viewer.fieldOfView = initialFieldOfView;
       if (viewer.jumpCameraToGoal) viewer.jumpCameraToGoal();
     }
 
