@@ -292,6 +292,12 @@
     font-weight:900;
   }
 
+  /* 1) 다양한 거리에서 선명한 시야 파란색 + 굵게 */
+  .messageTitle .emphasisLine{
+    color:var(--acuvue-blue-deep);
+    font-weight:900;
+  }
+
   .visionCard{
     padding:16px 18px;
     border-radius:28px;
@@ -383,7 +389,7 @@
     display:grid;
     grid-template-columns:1fr 320px;
     gap:12px;
-    align-items:stretch;
+    align-items:start;
     margin-top:8px;
   }
 
@@ -447,9 +453,25 @@
     font-weight:900;
     font-size:13px;
     line-height:1.55;
+    position:relative;
   }
 
   .explain strong{color:var(--text)}
+
+  /* 3) 카메라 ON 위치 조정 */
+  .explainTopBar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:10px;
+  }
+
+  .inlineCamBtn{
+    margin:0;
+    white-space:nowrap;
+    min-width:128px;
+  }
 
   .tagRow{
     display:flex;
@@ -461,18 +483,21 @@
   .tag{
     display:inline-flex;
     align-items:center;
-    padding:6px 10px;
+    justify-content:center;
+    padding:6px 12px;
     border-radius:999px;
-    background:#eaf3ff;
-    border:1px solid #cfe1f8;
-    color:#195aa8;
     font-size:12px;
     font-weight:900;
   }
 
+  /* 2) 태그 비활성 스타일 약하게 */
   .tagBtn{
     cursor:pointer;
     transition:.18s ease;
+    background:#f2f6fb;
+    border:1px solid #dde5ef;
+    color:#67788f;
+    box-shadow:none;
   }
 
   .tagBtn.active{
@@ -569,6 +594,17 @@
     .visionGrid{
       grid-template-columns:1fr;
     }
+
+    .explainTopBar{
+      align-items:flex-start;
+      flex-direction:row;
+    }
+
+    .inlineCamBtn{
+      min-width:118px;
+      padding:10px 12px;
+      font-size:12px;
+    }
   }
 </style>
 </head>
@@ -640,7 +676,7 @@
         <div class="messageBox">
           <p class="messageTitle">
             아큐브 멀티포컬은 <strong>183개 동공 크기별 디자인</strong>으로<br>
-            다양한 거리에서 선명한 시야와 편안함을 제공합니다
+            <span class="emphasisLine">다양한 거리에서 선명한 시야</span>와 편안함을 제공합니다
           </p>
         </div>
 
@@ -680,10 +716,12 @@
       </div>
 
       <div class="explain" id="explainBox">
-        <strong>시뮬레이션 해석</strong><br><br>
+        <div class="explainTopBar">
+          <strong>시뮬레이션 해석</strong>
+          <button class="btn inlineCamBtn" id="camBtn" type="button">카메라 ON</button>
+        </div>
         <div class="tagRow" id="explainTags"></div>
         <div class="muted" id="explainConclusion" style="margin-top:12px;"></div>
-        <button class="btn" id="camBtn" type="button" style="margin-top:14px;">카메라 ON</button>
       </div>
     </div>
   </div>
