@@ -132,44 +132,43 @@
     }
     .powermap-bar-wrap{
       position:relative;
-      height:24px;
+      height:22px;
       display:flex;
       align-items:center;
     }
     .powermap-bar{
       width:100%;
-      height:16px;
+      height:14px;
       border-radius:999px;
       position:relative;
       overflow:hidden;
-      border:1.5px solid #22466c;
+      border:1.25px solid #28476a;
       background:
         linear-gradient(90deg,
-          #5147a5 0%,
-          #6b6eb8 24%,
-          #8ea8d1 54%,
-          #8ac1df 78%,
-          #74c7e5 100%);
+          #4f4ca3 0%,
+          #6d78ba 28%,
+          #93abd0 56%,
+          #88bddc 78%,
+          #77c7e3 100%);
       box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.32),
-        0 4px 10px rgba(24,58,100,.08);
+        inset 0 1px 1px rgba(255,255,255,.24),
+        inset 0 -1px 2px rgba(25,54,89,.10);
     }
     .powermap-bar::after{
       content:"";
       position:absolute;
       inset:0;
-      background:linear-gradient(180deg, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 58%);
+      background:linear-gradient(180deg, rgba(255,255,255,.12) 0%, rgba(255,255,255,0) 60%);
       pointer-events:none;
     }
     .powermap-tick{
       position:absolute;
       top:50%;
       width:3px;
-      height:14px;
+      height:12px;
       border-radius:999px;
-      background:#29496c;
+      background:#36597d;
       transform:translate(-50%,-50%);
-      box-shadow:0 0 0 1px rgba(255,255,255,.22);
       opacity:.82;
     }
     .tick-1{left:20%}
@@ -178,7 +177,7 @@
 
     .hero-buttons{
       display:grid;
-      grid-template-columns:78px 1fr 1fr;
+      grid-template-columns:64px 1fr 1fr;
       gap:10px;
       margin-top:16px;
       position:relative;
@@ -203,7 +202,7 @@
       min-width:0;
     }
     .round-btn{
-      font-size:28px;
+      font-size:26px;
       display:flex;
       align-items:center;
       justify-content:center;
@@ -243,18 +242,18 @@
         font-size:11px;
       }
       .powermap-bar-wrap{
-        height:22px;
+        height:20px;
       }
       .powermap-bar{
-        height:14px;
+        height:13px;
       }
       .powermap-tick{
-        height:12px;
-        width:3px;
+        height:11px;
+        width:2.5px;
       }
 
       .hero-buttons{
-        grid-template-columns:68px 1fr 1fr;
+        grid-template-columns:60px 1fr 1fr;
         gap:8px;
       }
       .round-btn,.mode-btn{
@@ -263,7 +262,7 @@
         font-size:13px;
       }
       .round-btn{
-        font-size:25px;
+        font-size:23px;
       }
     }
   </style>
