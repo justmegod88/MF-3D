@@ -329,33 +329,69 @@
     const card1 = document.getElementById('card1');
     const powermapPanel = document.getElementById('powermapPanel');
 
+    const MODE_CONFIG = {
+      transparent: {
+        src: 'lens_clear.glb',
+        panel: 'none'
+      },
+      power: {
+        src: 'lens_powermap.glb',
+        panel: 'block'
+      }
+    };
+
+    let currentMode = 'power';
     let initialViewByMode = {
       transparent: null,
       power: null
     };
-
-    let currentMode = 'power';
+    let pendingViewForMode = null;
 
     function readCurrentView() {
       const orbit = viewer.getCameraOrbit();
       const target = viewer.getCameraTarget();
       return {
-        orbit: `${orbit.theta}rad ${orbit.phi}rad ${orbit.radius}m`,
-        target: `${target.x}m ${target.y}m ${target.z}m`,
-        fov: viewer.fieldOfView
+        orbitTheta: orbit.theta,
+        orbitPhi: orbit.phi,
+        orbitRadius: orbit.radius,
+        targetX: target.x,
+        targetY: target.y,
+        targetZ: target.z,
+        fov: parseFloat(viewer.fieldOfView)
       };
     }
 
     function applyView(viewState) {
       if (!viewState) return;
-      viewer.cameraOrbit = viewState.orbit;
-      viewer.cameraTarget = viewState.target;
-      viewer.fieldOfView = viewState.fov;
+      viewer.cameraOrbit = `${viewState.orbitTheta}rad ${viewState.orbitPhi}rad ${viewState.orbitRadius}m`;
+      viewer.cameraTarget = `${viewState.targetX}m ${viewState.targetY}m ${viewState.targetZ}m`;
+      viewer.fieldOfView = `${viewState.fov}deg`;
       if (viewer.jumpCameraToGoal) viewer.jumpCameraToGoal();
     }
 
-    function saveCurrentModeView() {
-      initialViewByMode[currentMode] = readCurrentView();
+    function buildRelativeView(fromMode, toMode, currentView) {
+      const fromBase = initialViewByMode[fromMode];
+      const toBase = initialViewByMode[toMode];
+      if (!fromBase || !toBase || !currentView) return null;
+
+      const thetaDelta = currentView.orbitTheta - fromBase.orbitTheta;
+      const phiDelta = currentView.orbitPhi - fromBase.orbitPhi;
+      const radiusRatio = fromBase.orbitRadius !== 0 ? (currentView.orbitRadius / fromBase.orbitRadius) : 1;
+      const fovDelta = currentView.fov - fromBase.fov;
+
+      const targetDeltaX = currentView.targetX - fromBase.targetX;
+      const targetDeltaY = currentView.targetY - fromBase.targetY;
+      const targetDeltaZ = currentView.targetZ - fromBase.targetZ;
+
+      return {
+        orbitTheta: toBase.orbitTheta + thetaDelta,
+        orbitPhi: toBase.orbitPhi + phiDelta,
+        orbitRadius: toBase.orbitRadius * radiusRatio,
+        targetX: toBase.targetX + targetDeltaX,
+        targetY: toBase.targetY + targetDeltaY,
+        targetZ: toBase.targetZ + targetDeltaZ,
+        fov: toBase.fov + fovDelta
+      };
     }
 
     viewer.addEventListener('load', () => {
@@ -363,26 +399,38 @@
         requestAnimationFrame(() => {
           if (!initialViewByMode[currentMode]) {
             initialViewByMode[currentMode] = readCurrentView();
-          } else {
-            applyView(initialViewByMode[currentMode]);
+          }
+
+          if (pendingViewForMode && pendingViewForMode.mode === currentMode) {
+            applyView(pendingViewForMode.view);
+            pendingViewForMode = null;
           }
         });
       });
     });
 
     function setMode(mode){
-      saveCurrentModeView();
+      if (mode === currentMode) return;
 
-      currentMode = mode;
-      transparentBtn.classList.toggle('active', mode === 'transparent');
-      powerBtn.classList.toggle('active', mode === 'power');
-      viewer.src = mode === 'transparent' ? 'lens_clear.glb' : 'lens_powermap.glb';
-      powermapPanel.style.display = mode === 'power' ? 'block' : 'none';
+      const currentView = readCurrentView();
+      const targetMode = mode;
+
+      if (initialViewByMode[currentMode] && initialViewByMode[targetMode]) {
+        const linkedView = buildRelativeView(currentMode, targetMode, currentView);
+        pendingViewForMode = { mode: targetMode, view: linkedView };
+      } else {
+        pendingViewForMode = null;
+      }
+
+      currentMode = targetMode;
+      transparentBtn.classList.toggle('active', targetMode === 'transparent');
+      powerBtn.classList.toggle('active', targetMode === 'power');
+      powermapPanel.style.display = MODE_CONFIG[targetMode].panel;
+      viewer.src = MODE_CONFIG[targetMode].src;
     }
 
     function resetViewer(){
-      const initialView = initialViewByMode[currentMode];
-      applyView(initialView);
+      applyView(initialViewByMode[currentMode]);
     }
 
     transparentBtn.addEventListener('click', () => setMode('transparent'));
@@ -393,6 +441,9 @@
       window.open('card1.html', '_blank');
     });
 
+    currentMode = 'transparent';
+    transparentBtn.classList.toggle('active', false);
+    powerBtn.classList.toggle('active', false);
     setMode('power');
   </script>
 </body>
