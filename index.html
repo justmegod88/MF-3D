@@ -103,6 +103,78 @@
       display:block;
     }
 
+    /* 도수 영역 그래프 */
+    .power-graph-wrap{
+      margin-top:14px;
+      margin-bottom:14px;
+      padding:12px 14px 10px;
+      border-radius:18px;
+      background:linear-gradient(180deg,#ffffff 0%, #f7faff 100%);
+      border:1.5px solid #d9e5f2;
+      box-shadow:0 10px 24px rgba(16,42,67,.08);
+      position:relative;
+      z-index:2;
+    }
+    .power-graph-head{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:10px;
+    }
+    .power-graph-title{
+      font-size:22px;
+      line-height:1;
+      font-weight:900;
+      letter-spacing:-.03em;
+      color:#0e2642;
+      white-space:nowrap;
+    }
+    .power-graph-side{
+      font-size:14px;
+      line-height:1;
+      font-weight:800;
+      color:#495f77;
+      white-space:nowrap;
+    }
+    .power-graph-bar{
+      position:relative;
+      width:100%;
+      height:26px;
+      border-radius:999px;
+      overflow:hidden;
+      border:2px solid #173452;
+      background:#dce8f5;
+      box-shadow:
+        inset 0 2px 6px rgba(255,255,255,.45),
+        0 4px 12px rgba(16,42,67,.08);
+    }
+    .power-graph-fill{
+      position:absolute;
+      inset:0;
+      background:
+        linear-gradient(90deg,
+          #4a4b9a 0%,
+          #575ca8 16%,
+          #93a7cf 34%,
+          #aeb6d9 48%,
+          #95b6dc 66%,
+          #83c3e4 82%,
+          #7dc6e6 100%);
+    }
+    .power-graph-divider{
+      position:absolute;
+      top:2px;
+      bottom:2px;
+      width:2px;
+      background:rgba(24,47,77,.75);
+      border-radius:2px;
+      box-shadow:0 0 0 1px rgba(255,255,255,.2);
+    }
+    .power-graph-divider.d1{ left:18%; }
+    .power-graph-divider.d2{ left:58%; }
+    .power-graph-divider.d3{ left:78%; }
+
     .hero-buttons{
       display:grid;
       grid-template-columns:84px 1fr 1fr;
@@ -157,6 +229,20 @@
         min-height:380px;
         height:380px;
       }
+      .power-graph-wrap{
+        margin-top:12px;
+        margin-bottom:12px;
+        padding:11px 12px 10px;
+      }
+      .power-graph-title{
+        font-size:18px;
+      }
+      .power-graph-side{
+        font-size:12px;
+      }
+      .power-graph-bar{
+        height:22px;
+      }
       .hero-buttons{
         grid-template-columns:76px 1fr 1fr;
       }
@@ -192,6 +278,21 @@
           touch-action="pan-y"
           ar="false">
         </model-viewer>
+      </div>
+
+      <div class="power-graph-wrap" aria-label="도수 영역 그래프">
+        <div class="power-graph-head">
+          <div class="power-graph-title">도수 분포</div>
+          <div class="power-graph-side">근용도수</div>
+          <div class="power-graph-side">원용도수</div>
+        </div>
+
+        <div class="power-graph-bar">
+          <div class="power-graph-fill"></div>
+          <span class="power-graph-divider d1"></span>
+          <span class="power-graph-divider d2"></span>
+          <span class="power-graph-divider d3"></span>
+        </div>
       </div>
 
       <div class="hero-buttons">
