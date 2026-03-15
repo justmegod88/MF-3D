@@ -103,44 +103,46 @@
       display:block;
     }
 
-    /* 도수 영역 그래프 */
+    /* 도수 분포 그래프 */
     .power-graph-wrap{
+      display:none;
       margin-top:14px;
       margin-bottom:14px;
-      padding:12px 14px 10px;
-      border-radius:18px;
-      background:linear-gradient(180deg,#ffffff 0%, #f7faff 100%);
-      border:1.5px solid #d9e5f2;
-      box-shadow:0 10px 24px rgba(16,42,67,.08);
+      padding:6px 4px 0;
       position:relative;
       z-index:2;
     }
-    .power-graph-head{
-      display:flex;
-      align-items:flex-end;
-      justify-content:space-between;
-      gap:12px;
-      margin-bottom:10px;
+    .power-graph-wrap.show{
+      display:block;
     }
     .power-graph-title{
       font-size:22px;
-      line-height:1;
+      line-height:1.2;
       font-weight:900;
       letter-spacing:-.03em;
       color:#0e2642;
-      white-space:nowrap;
+      margin-bottom:10px;
+      word-break:keep-all;
     }
-    .power-graph-side{
-      font-size:14px;
-      line-height:1;
+    .power-graph-row{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      width:100%;
+    }
+    .power-graph-label{
+      flex:0 0 auto;
+      font-size:18px;
+      line-height:1.2;
       font-weight:800;
-      color:#495f77;
+      color:#243c56;
       white-space:nowrap;
+      letter-spacing:-.02em;
     }
     .power-graph-bar{
+      flex:1 1 auto;
       position:relative;
-      width:100%;
-      height:26px;
+      height:24px;
       border-radius:999px;
       overflow:hidden;
       border:2px solid #173452;
@@ -152,27 +154,25 @@
     .power-graph-fill{
       position:absolute;
       inset:0;
-      background:
-        linear-gradient(90deg,
-          #4a4b9a 0%,
-          #575ca8 16%,
-          #93a7cf 34%,
-          #aeb6d9 48%,
-          #95b6dc 66%,
-          #83c3e4 82%,
-          #7dc6e6 100%);
+      background:linear-gradient(90deg,
+        #3c3f8d 0%,
+        #555da6 18%,
+        #8ea0cc 42%,
+        #9db6dc 65%,
+        #85c0e2 82%,
+        #78c7e8 100%);
     }
     .power-graph-divider{
       position:absolute;
       top:2px;
       bottom:2px;
       width:2px;
-      background:rgba(24,47,77,.75);
+      background:rgba(24,47,77,.72);
       border-radius:2px;
-      box-shadow:0 0 0 1px rgba(255,255,255,.2);
+      box-shadow:0 0 0 1px rgba(255,255,255,.18);
     }
-    .power-graph-divider.d1{ left:18%; }
-    .power-graph-divider.d2{ left:58%; }
+    .power-graph-divider.d1{ left:20%; }
+    .power-graph-divider.d2{ left:55%; }
     .power-graph-divider.d3{ left:78%; }
 
     .hero-buttons{
@@ -229,19 +229,18 @@
         min-height:380px;
         height:380px;
       }
-      .power-graph-wrap{
-        margin-top:12px;
-        margin-bottom:12px;
-        padding:11px 12px 10px;
-      }
       .power-graph-title{
         font-size:18px;
+        margin-bottom:8px;
       }
-      .power-graph-side{
-        font-size:12px;
+      .power-graph-row{
+        gap:10px;
+      }
+      .power-graph-label{
+        font-size:14px;
       }
       .power-graph-bar{
-        height:22px;
+        height:20px;
       }
       .hero-buttons{
         grid-template-columns:76px 1fr 1fr;
@@ -280,18 +279,17 @@
         </model-viewer>
       </div>
 
-      <div class="power-graph-wrap" aria-label="도수 영역 그래프">
-        <div class="power-graph-head">
-          <div class="power-graph-title">도수 분포</div>
-          <div class="power-graph-side">근용도수</div>
-          <div class="power-graph-side">원용도수</div>
-        </div>
-
-        <div class="power-graph-bar">
-          <div class="power-graph-fill"></div>
-          <span class="power-graph-divider d1"></span>
-          <span class="power-graph-divider d2"></span>
-          <span class="power-graph-divider d3"></span>
+      <div class="power-graph-wrap" id="powerGraph" aria-label="도수 분포 그래프">
+        <div class="power-graph-title">도수 분포</div>
+        <div class="power-graph-row">
+          <div class="power-graph-label">근용도수</div>
+          <div class="power-graph-bar">
+            <div class="power-graph-fill"></div>
+            <span class="power-graph-divider d1"></span>
+            <span class="power-graph-divider d2"></span>
+            <span class="power-graph-divider d3"></span>
+          </div>
+          <div class="power-graph-label">원용도수</div>
         </div>
       </div>
 
@@ -309,11 +307,15 @@
     const transparentBtn = document.getElementById('transparentBtn');
     const powerBtn = document.getElementById('powerBtn');
     const card1 = document.getElementById('card1');
+    const powerGraph = document.getElementById('powerGraph');
 
     function setMode(mode){
+      const isPower = mode === 'power';
+
       transparentBtn.classList.toggle('active', mode === 'transparent');
-      powerBtn.classList.toggle('active', mode === 'power');
-      viewer.src = mode === 'transparent' ? 'lens_clear.glb' : 'lens_powermap.glb';
+      powerBtn.classList.toggle('active', isPower);
+      viewer.src = isPower ? 'lens_powermap.glb' : 'lens_clear.glb';
+      powerGraph.classList.toggle('show', isPower);
     }
 
     function resetViewer(){
