@@ -315,8 +315,8 @@
 
       <div class="hero-buttons">
         <button class="round-btn" id="resetBtn" type="button">↺</button>
-        <button class="mode-btn" id="transparentBtn" type="button">투명 렌즈 모드</button>
-        <button class="mode-btn active" id="powerBtn" type="button">렌즈 파워 MAP</button>
+        <button class="mode-btn active" id="transparentBtn" type="button">투명 렌즈 모드</button>
+        <button class="mode-btn" id="powerBtn" type="button">렌즈 파워 MAP</button>
       </div>
     </section>
   </div>
@@ -340,7 +340,7 @@
       }
     };
 
-    let currentMode = 'power';
+    let currentMode = 'transparent';
     let initialViewByMode = {
       transparent: null,
       power: null
@@ -440,11 +440,6 @@
     card1.addEventListener('click', () => {
       window.open('card1.html', '_blank');
     });
-
-    currentMode = 'transparent';
-    transparentBtn.classList.toggle('active', false);
-    powerBtn.classList.toggle('active', false);
-    setMode('power');
   </script>
 </body>
 </html>
