@@ -13,7 +13,9 @@
       --text:#15304b;
       --sub:#60758a;
       --blue:#005EB8;
+      --blue-deep:#0d4f96;
       --shadow:0 14px 34px rgba(16,42,67,.10);
+      --shadow-soft:0 10px 24px rgba(16,42,67,.08);
     }
     *{box-sizing:border-box}
     html,body{
@@ -23,20 +25,14 @@
       font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Segoe UI",Arial,sans-serif;
       color:var(--text);
     }
-    .wrap{
-      max-width:980px;
-      margin:0 auto;
-      padding:18px 14px 40px;
-    }
+    .wrap{max-width:980px;margin:0 auto;padding:18px 14px 40px}
 
-    .top-cards{
-      margin-bottom:18px;
-    }
+    .top-cards{margin-bottom:18px}
     .menu-card{
       background:var(--card);
       border:1.5px solid #dbe5f1;
       border-radius:22px;
-      padding:18px 16px 16px;
+      padding:20px 18px 18px;
       box-shadow:var(--shadow);
       min-height:118px;
       cursor:pointer;
@@ -103,88 +99,88 @@
       display:block;
     }
 
-    /* 도수 분포 그래프 */
-    .power-graph-wrap{
-      display:none;
-      margin-top:14px;
-      margin-bottom:14px;
-      padding:6px 4px 0;
-      position:relative;
-      z-index:2;
+    .powermap-panel{
+      margin-top:18px;
+      padding:0 8px;
+      transition:.2s ease;
     }
-    .power-graph-wrap.show{
-      display:block;
-    }
-    .power-graph-title{
-      font-size:22px;
-      line-height:1.2;
+    .powermap-title{
+      font-size:18px;
       font-weight:900;
       letter-spacing:-.03em;
-      color:#0e2642;
-      margin-bottom:10px;
-      word-break:keep-all;
+      color:#102a46;
+      margin:0 0 10px;
     }
-    .power-graph-row{
+    .powermap-row{
+      display:grid;
+      grid-template-columns:auto 1fr auto;
+      gap:10px;
+      align-items:center;
+    }
+    .powermap-label{
+      font-size:14px;
+      line-height:1;
+      font-weight:800;
+      color:#264968;
+      white-space:nowrap;
+    }
+    .powermap-bar-wrap{
+      position:relative;
+      height:28px;
       display:flex;
       align-items:center;
-      gap:14px;
+    }
+    .powermap-bar{
       width:100%;
-    }
-    .power-graph-label{
-      flex:0 0 auto;
-      font-size:18px;
-      line-height:1.2;
-      font-weight:800;
-      color:#243c56;
-      white-space:nowrap;
-      letter-spacing:-.02em;
-    }
-    .power-graph-bar{
-      flex:1 1 auto;
-      position:relative;
-      height:24px;
+      height:18px;
       border-radius:999px;
+      position:relative;
       overflow:hidden;
-      border:2px solid #173452;
-      background:#dce8f5;
+      border:2px solid #183a64;
+      background:
+        linear-gradient(90deg,
+          #5147a5 0%,
+          #6d6fbd 26%,
+          #9eb7d8 56%,
+          #7ec0df 78%,
+          #73c7e7 100%);
       box-shadow:
-        inset 0 2px 6px rgba(255,255,255,.45),
-        0 4px 12px rgba(16,42,67,.08);
+        inset 0 1px 0 rgba(255,255,255,.35),
+        0 4px 10px rgba(24,58,100,.10);
     }
-    .power-graph-fill{
+    .powermap-bar::after{
+      content:"";
       position:absolute;
       inset:0;
-      background:linear-gradient(90deg,
-        #3c3f8d 0%,
-        #555da6 18%,
-        #8ea0cc 42%,
-        #9db6dc 65%,
-        #85c0e2 82%,
-        #78c7e8 100%);
+      background:linear-gradient(180deg, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 55%);
+      pointer-events:none;
     }
-    .power-graph-divider{
+    .powermap-tick{
       position:absolute;
-      top:2px;
-      bottom:2px;
-      width:2px;
-      background:rgba(24,47,77,.72);
-      border-radius:2px;
-      box-shadow:0 0 0 1px rgba(255,255,255,.18);
+      top:50%;
+      width:4px;
+      height:16px;
+      border-radius:999px;
+      background:#27496f;
+      transform:translate(-50%,-50%);
+      box-shadow:0 0 0 2px rgba(255,255,255,.28);
+      opacity:.85;
     }
-    .power-graph-divider.d1{ left:20%; }
-    .power-graph-divider.d2{ left:55%; }
-    .power-graph-divider.d3{ left:78%; }
+    .tick-1{left:20%}
+    .tick-2{left:55%}
+    .tick-3{left:78%}
 
     .hero-buttons{
-      display:grid;
-      grid-template-columns:84px 1fr 1fr;
+      display:flex;
+      justify-content:center;
       gap:12px;
       margin-top:18px;
       position:relative;
       z-index:2;
+      flex-wrap:nowrap;
     }
     .round-btn,.mode-btn{
-      height:72px;
+      height:64px;
       border-radius:22px;
       border:1.5px solid #d3deec;
       background:#fff;
@@ -192,23 +188,20 @@
       font-size:16px;
       font-weight:900;
       letter-spacing:-.02em;
-      box-shadow:var(--shadow);
+      box-shadow:var(--shadow-soft);
       cursor:pointer;
       -webkit-appearance:none;
       appearance:none;
       pointer-events:auto;
+      flex:0 0 auto;
     }
+    .round-btn{width:92px;font-size:30px;display:flex;align-items:center;justify-content:center}
+    .mode-btn{width:206px}
     .mode-btn.active{
       background:linear-gradient(180deg,var(--blue) 0%, #0b5bb5 100%);
       color:#fff;
       border-color:var(--blue);
       box-shadow:0 14px 28px rgba(13,99,198,.20);
-    }
-    .round-btn{
-      font-size:30px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
     }
 
     @media (max-width:720px){
@@ -216,34 +209,35 @@
         min-height:108px;
         padding:16px 14px;
       }
-      .menu-eyebrow{
-        font-size:16px;
-      }
-      .menu-title{
-        font-size:19px;
-      }
-      .menu-sub{
-        font-size:13px;
-      }
+      .menu-eyebrow{font-size:16px}
+      .menu-title{font-size:19px}
+      .menu-sub{font-size:13px}
+
       .hero-viewer,model-viewer{
         min-height:380px;
         height:380px;
       }
-      .power-graph-title{
-        font-size:18px;
-        margin-bottom:8px;
-      }
-      .power-graph-row{
+
+      .powermap-title{font-size:16px;margin-bottom:8px}
+      .powermap-label{font-size:12px}
+      .powermap-bar-wrap{height:24px}
+      .powermap-bar{height:16px}
+      .powermap-tick{height:14px;width:3px}
+
+      .hero-buttons{
         gap:10px;
       }
-      .power-graph-label{
+      .round-btn{
+        width:78px;
+        height:58px;
+        border-radius:20px;
+        font-size:28px;
+      }
+      .mode-btn{
+        width:160px;
+        height:58px;
+        border-radius:20px;
         font-size:14px;
-      }
-      .power-graph-bar{
-        height:20px;
-      }
-      .hero-buttons{
-        grid-template-columns:76px 1fr 1fr;
       }
     }
   </style>
@@ -279,24 +273,25 @@
         </model-viewer>
       </div>
 
-      <div class="power-graph-wrap" id="powerGraph" aria-label="도수 분포 그래프">
-        <div class="power-graph-title">도수 분포</div>
-        <div class="power-graph-row">
-          <div class="power-graph-label">근용도수</div>
-          <div class="power-graph-bar">
-            <div class="power-graph-fill"></div>
-            <span class="power-graph-divider d1"></span>
-            <span class="power-graph-divider d2"></span>
-            <span class="power-graph-divider d3"></span>
+      <div class="powermap-panel" id="powermapPanel" style="display:none;">
+        <h3 class="powermap-title">도수 분포</h3>
+        <div class="powermap-row">
+          <div class="powermap-label">근용도수</div>
+          <div class="powermap-bar-wrap">
+            <div class="powermap-bar">
+              <span class="powermap-tick tick-1"></span>
+              <span class="powermap-tick tick-2"></span>
+              <span class="powermap-tick tick-3"></span>
+            </div>
           </div>
-          <div class="power-graph-label">원용도수</div>
+          <div class="powermap-label">원용도수</div>
         </div>
       </div>
 
       <div class="hero-buttons">
         <button class="round-btn" id="resetBtn" type="button">↺</button>
-        <button class="mode-btn active" id="transparentBtn" type="button">투명 렌즈 모드</button>
-        <button class="mode-btn" id="powerBtn" type="button">렌즈 파워 MAP</button>
+        <button class="mode-btn" id="transparentBtn" type="button">투명 렌즈 모드</button>
+        <button class="mode-btn active" id="powerBtn" type="button">렌즈 파워 MAP</button>
       </div>
     </section>
   </div>
@@ -307,15 +302,13 @@
     const transparentBtn = document.getElementById('transparentBtn');
     const powerBtn = document.getElementById('powerBtn');
     const card1 = document.getElementById('card1');
-    const powerGraph = document.getElementById('powerGraph');
+    const powermapPanel = document.getElementById('powermapPanel');
 
     function setMode(mode){
-      const isPower = mode === 'power';
-
       transparentBtn.classList.toggle('active', mode === 'transparent');
-      powerBtn.classList.toggle('active', isPower);
-      viewer.src = isPower ? 'lens_powermap.glb' : 'lens_clear.glb';
-      powerGraph.classList.toggle('show', isPower);
+      powerBtn.classList.toggle('active', mode === 'power');
+      viewer.src = mode === 'transparent' ? 'lens_clear.glb' : 'lens_powermap.glb';
+      powermapPanel.style.display = mode === 'power' ? 'block' : 'none';
     }
 
     function resetViewer(){
@@ -330,6 +323,9 @@
     card1.addEventListener('click', () => {
       window.open('card1.html', '_blank');
     });
+
+    setMode('power');
   </script>
 </body>
 </html>
+
