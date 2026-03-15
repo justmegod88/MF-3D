@@ -394,6 +394,10 @@
     border-radius:18px;
     overflow:hidden;
     background:#000;
+    --blur-amt:8px;
+    --blur-opacity:0;
+    --clear-stop:55%;
+    --blur-start:72%;
   }
 
   .screen video,
@@ -407,21 +411,29 @@
   .layer{position:absolute; inset:0}
 
   .layer.blurred{
-    filter:blur(8px) contrast(1.05);
+    filter:blur(var(--blur-amt)) contrast(1.05);
     opacity:0;
-    transition:opacity .2s ease;
+    transition:opacity .2s ease, filter .2s ease;
   }
 
-  .mask-center .layer.blurred{
-    opacity:1;
-    -webkit-mask-image:radial-gradient(circle at 50% 50%, rgba(0,0,0,1) 0 46%, rgba(0,0,0,0) 62%);
-            mask-image:radial-gradient(circle at 50% 50%, rgba(0,0,0,1) 0 46%, rgba(0,0,0,0) 62%);
+  .mask-overall .layer.blurred{
+    opacity:var(--blur-opacity);
+    -webkit-mask-image:none;
+            mask-image:none;
   }
 
   .mask-periphery .layer.blurred{
-    opacity:1;
-    -webkit-mask-image:radial-gradient(circle at 50% 50%, rgba(0,0,0,0) 0 55%, rgba(0,0,0,1) 72%);
-            mask-image:radial-gradient(circle at 50% 50%, rgba(0,0,0,0) 0 55%, rgba(0,0,0,1) 72%);
+    opacity:var(--blur-opacity);
+    -webkit-mask-image:radial-gradient(
+      circle at 50% 50%,
+      rgba(0,0,0,0) 0 var(--clear-stop),
+      rgba(0,0,0,1) var(--blur-start) 100%
+    );
+            mask-image:radial-gradient(
+      circle at 50% 50%,
+      rgba(0,0,0,0) 0 var(--clear-stop),
+      rgba(0,0,0,1) var(--blur-start) 100%
+    );
   }
 
   .fishbowl .layer.base{filter:url(#fishbowlFilter)}
@@ -443,6 +455,7 @@
     display:flex;
     flex-wrap:wrap;
     gap:8px;
+    margin-bottom:8px;
   }
 
   .tag{
@@ -455,6 +468,18 @@
     color:#195aa8;
     font-size:12px;
     font-weight:900;
+  }
+
+  .tagBtn{
+    cursor:pointer;
+    transition:.18s ease;
+  }
+
+  .tagBtn.active{
+    background:linear-gradient(180deg,#dcebff 0%, #cfe3ff 100%);
+    border-color:#9dbfed;
+    color:#0f5aa6;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.95);
   }
 
   @media (max-width:720px){
@@ -692,8 +717,18 @@
   const MAX_PUPIL_MM = 7.0;
   const IRIS_MM = 12.0;
   const LENS_MM = 12.0;
+  const MATCH_BUFFER_MM = 0.6;
 
   let designMode = 'on';
+  let lastPupilMM = 0;
+  let lastOpticMM = 0;
+  let modalPreviewState = 'match';
+
+  const PREVIEW_EXAMPLES = {
+    match: { pupilMM: 5.0, opticMM: 5.0 },
+    pupilGreater: { pupilMM: 6.4, opticMM: 5.0 },
+    opticGreater: { pupilMM: 3.6, opticMM: 5.0 }
+  };
 
   function getSphereValue() {
     return Number(sphereSlider.value);
@@ -733,51 +768,96 @@
     return (mm / IRIS_MM) * irisRadiusPx;
   }
 
-  function setExplain(tags, conclusion) {
-    explainTags.innerHTML = '';
-    tags.forEach(label => {
-      const el = document.createElement('span');
-      el.className = 'tag';
-      el.textContent = label;
-      explainTags.appendChild(el);
-    });
-    explainConclusion.textContent = conclusion;
-  }
-
-  function updateVisionEffect(pupilMM, opticMM) {
-    screen.classList.remove('mask-center','mask-periphery','fishbowl');
+  function getRelationState(pupilMM, opticMM) {
     const diff = pupilMM - opticMM;
     const absDiff = Math.abs(diff);
 
-    if (designMode === 'on') {
-      setExplain(
-        ['광학부=동공사이즈', '점선 일치'],
-        '183개 동공 크기별 광학부 디자인은 동공 크기에 맞춰 광학부도 함께 변합니다.'
-      );
+    if (absDiff <= MATCH_BUFFER_MM) return 'match';
+    if (diff > 0) return 'pupilGreater';
+    return 'opticGreater';
+  }
+
+  function getModalPreviewPair(state) {
+    const actualState = getRelationState(lastPupilMM, lastOpticMM);
+    if (state === actualState) {
+      return { pupilMM: lastPupilMM, opticMM: lastOpticMM };
+    }
+    return PREVIEW_EXAMPLES[state];
+  }
+
+  function renderTagButtons(activeState) {
+    const tagMap = [
+      { key:'match', label:'동공~광학부' },
+      { key:'pupilGreater', label:'동공>광학부' },
+      { key:'opticGreater', label:'동공<광학부' }
+    ];
+
+    explainTags.innerHTML = '';
+    tagMap.forEach(item => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = `tag tagBtn${activeState === item.key ? ' active' : ''}`;
+      btn.textContent = item.label;
+      btn.addEventListener('click', () => {
+        modalPreviewState = item.key;
+        renderModalPreview();
+      });
+      explainTags.appendChild(btn);
+    });
+  }
+
+  function setExplainByState(state) {
+    if (state === 'match') {
+      explainConclusion.textContent = '동공 사이즈와 광학부 사이즈가 유사하여 원~근거리 전반적으로 시력이 양호합니다.';
       return;
     }
 
-    if (absDiff < 0.15) {
-      setExplain(
-        ['광학부 5mm 고정', '차이 거의 없음'],
-        '현재 동공 크기가 5mm에 가까워 광학부와 차이가 작습니다.'
-      );
+    if (state === 'pupilGreater') {
+      explainConclusion.textContent = '동공사이즈가 광학부 사이즈보다 커서 주변부 시야 번짐이나 빛번짐이 발생할 수 있습니다.';
       return;
     }
 
-    if (diff > 0) {
+    explainConclusion.textContent = '원용도수 영역이 충분히 노출되지 않아 원거리에서 흐림이 발생할 수 있습니다.';
+  }
+
+  function updateVisionEffect(pupilMM, opticMM, forcedState = null) {
+    screen.classList.remove('mask-overall','mask-periphery','fishbowl');
+
+    const actualState = getRelationState(pupilMM, opticMM);
+    const state = forcedState || actualState;
+    const gap = Math.abs(pupilMM - opticMM);
+    const overflow = Math.max(0, gap - MATCH_BUFFER_MM);
+    const strength = Math.max(0, Math.min(1, overflow / 1.4));
+
+    screen.style.setProperty('--blur-amt', '8px');
+    screen.style.setProperty('--blur-opacity', '0');
+    screen.style.setProperty('--clear-stop', '55%');
+    screen.style.setProperty('--blur-start', '72%');
+
+    renderTagButtons(state);
+    setExplainByState(state);
+
+    if (state === 'match') {
+      return;
+    }
+
+    if (state === 'pupilGreater') {
       screen.classList.add('mask-periphery','fishbowl');
-      setExplain(
-        ['동공>광학부', '점선 불일치'],
-        'OFF에서는 광학부가 5mm로 고정되어, 동공이 더 크면 점선과 광학부 폭이 맞지 않게 보입니다.'
-      );
-    } else {
-      screen.classList.add('mask-center');
-      setExplain(
-        ['동공<광학부', '점선 불일치'],
-        'OFF에서는 광학부가 5mm로 고정되어, 동공이 더 작으면 점선과 광학부 폭이 맞지 않게 보입니다.'
-      );
+      screen.style.setProperty('--blur-amt', `${10 + (strength * 10)}px`);
+      screen.style.setProperty('--blur-opacity', `${0.55 + (strength * 0.35)}`);
+      screen.style.setProperty('--clear-stop', `${56 - (strength * 10)}%`);
+      screen.style.setProperty('--blur-start', `${70 - (strength * 8)}%`);
+      return;
     }
+
+    screen.classList.add('mask-overall');
+    screen.style.setProperty('--blur-amt', `${8 + (strength * 10)}px`);
+    screen.style.setProperty('--blur-opacity', `${0.35 + (strength * 0.45)}`);
+  }
+
+  function renderModalPreview() {
+    const pair = getModalPreviewPair(modalPreviewState);
+    updateVisionEffect(pair.pupilMM, pair.opticMM, modalPreviewState);
   }
 
   function drawEyeOverlay(pupilMM, opticMM) {
@@ -817,18 +897,18 @@
     lensOverlay.innerHTML = `
       <defs>
         <radialGradient id="opticCoreGrad" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="rgba(110,95,210,0.85)"></stop>
-          <stop offset="100%" stop-color="rgba(130,120,230,0.65)"></stop>
+          <stop offset="0%" stop-color="rgba(110,95,210,0.88)"></stop>
+          <stop offset="100%" stop-color="rgba(136,122,232,0.78)"></stop>
         </radialGradient>
 
         <radialGradient id="opticMidGrad" cx="50%" cy="50%" r="52%">
-          <stop offset="0%" stop-color="rgba(165,155,235,0.45)"></stop>
-          <stop offset="100%" stop-color="rgba(180,170,245,0.35)"></stop>
+          <stop offset="0%" stop-color="rgba(168,158,237,0.56)"></stop>
+          <stop offset="100%" stop-color="rgba(185,176,244,0.46)"></stop>
         </radialGradient>
 
         <radialGradient id="opticOuterGrad" cx="50%" cy="50%" r="54%">
-          <stop offset="0%" stop-color="rgba(25,95,190,0.35)"></stop>
-          <stop offset="100%" stop-color="rgba(25,95,190,0.18)"></stop>
+          <stop offset="0%" stop-color="rgba(28,96,191,0.44)"></stop>
+          <stop offset="100%" stop-color="rgba(28,96,191,0.26)"></stop>
         </radialGradient>
       </defs>
 
@@ -852,6 +932,9 @@
     const pupilMM = calcPupilMM();
     const opticMM = calcOpticZoneMM(pupilMM);
 
+    lastPupilMM = pupilMM;
+    lastOpticMM = opticMM;
+
     sphereValue.textContent = formatSphere(getSphereValue());
     addValue.textContent = formatAdd(getAddIndex());
 
@@ -861,6 +944,11 @@
 
     onBtn.classList.toggle('active', designMode === 'on');
     offBtn.classList.toggle('active', designMode === 'off');
+
+    if (visionModal.classList.contains('open')) {
+      modalPreviewState = getRelationState(lastPupilMM, lastOpticMM);
+      renderModalPreview();
+    }
   }
 
   sphereSlider.addEventListener('input', updateAll);
@@ -877,6 +965,8 @@
   });
 
   openVisionBtn.addEventListener('click', () => {
+    modalPreviewState = getRelationState(lastPupilMM, lastOpticMM);
+    renderModalPreview();
     visionModal.classList.add('open');
   });
 
