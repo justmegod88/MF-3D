@@ -164,7 +164,7 @@
     .powermap-tick{
       position:absolute;
       top:50%;
-      width:3px;
+      width:1.5px;
       height:12px;
       border-radius:999px;
       background:#36597d;
@@ -249,7 +249,7 @@
       }
       .powermap-tick{
         height:11px;
-        width:2.5px;
+        width:1.25px;
       }
 
       .hero-buttons{
@@ -290,6 +290,8 @@
           exposure="1.1"
           environment-image="neutral"
           camera-orbit="0deg 75deg 105%"
+          camera-target="0m 0m 0m"
+          field-of-view="30deg"
           min-camera-orbit="auto auto 72%"
           max-camera-orbit="auto auto 170%"
           interaction-prompt="none"
@@ -329,6 +331,10 @@
     const card1 = document.getElementById('card1');
     const powermapPanel = document.getElementById('powermapPanel');
 
+    const DEFAULT_CAMERA_ORBIT = '0deg 75deg 105%';
+    const DEFAULT_CAMERA_TARGET = '0m 0m 0m';
+    const DEFAULT_FIELD_OF_VIEW = '30deg';
+
     function setMode(mode){
       transparentBtn.classList.toggle('active', mode === 'transparent');
       powerBtn.classList.toggle('active', mode === 'power');
@@ -337,8 +343,10 @@
     }
 
     function resetViewer(){
-      viewer.cameraOrbit = '0deg 75deg 105%';
-      viewer.fieldOfView = '30deg';
+      viewer.cameraOrbit = DEFAULT_CAMERA_ORBIT;
+      viewer.cameraTarget = DEFAULT_CAMERA_TARGET;
+      viewer.fieldOfView = DEFAULT_FIELD_OF_VIEW;
+      if (viewer.jumpCameraToGoal) viewer.jumpCameraToGoal();
     }
 
     transparentBtn.addEventListener('click', () => setMode('transparent'));
