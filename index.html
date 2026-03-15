@@ -329,25 +329,51 @@
     const card1 = document.getElementById('card1');
     const powermapPanel = document.getElementById('powermapPanel');
 
-    let initialCameraOrbit = null;
-    let initialCameraTarget = null;
-    let initialFieldOfView = null;
+    let initialViewByMode = {
+      transparent: null,
+      power: null
+    };
 
-    function saveInitialView() {
-      initialCameraOrbit = viewer.getCameraOrbit();
-      initialCameraTarget = viewer.getCameraTarget();
-      initialFieldOfView = viewer.fieldOfView;
+    let currentMode = 'power';
+
+    function readCurrentView() {
+      const orbit = viewer.getCameraOrbit();
+      const target = viewer.getCameraTarget();
+      return {
+        orbit: `${orbit.theta}rad ${orbit.phi}rad ${orbit.radius}m`,
+        target: `${target.x}m ${target.y}m ${target.z}m`,
+        fov: viewer.fieldOfView
+      };
+    }
+
+    function applyView(viewState) {
+      if (!viewState) return;
+      viewer.cameraOrbit = viewState.orbit;
+      viewer.cameraTarget = viewState.target;
+      viewer.fieldOfView = viewState.fov;
+      if (viewer.jumpCameraToGoal) viewer.jumpCameraToGoal();
+    }
+
+    function saveCurrentModeView() {
+      initialViewByMode[currentMode] = readCurrentView();
     }
 
     viewer.addEventListener('load', () => {
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          saveInitialView();
+          if (!initialViewByMode[currentMode]) {
+            initialViewByMode[currentMode] = readCurrentView();
+          } else {
+            applyView(initialViewByMode[currentMode]);
+          }
         });
       });
     });
 
     function setMode(mode){
+      saveCurrentModeView();
+
+      currentMode = mode;
       transparentBtn.classList.toggle('active', mode === 'transparent');
       powerBtn.classList.toggle('active', mode === 'power');
       viewer.src = mode === 'transparent' ? 'lens_clear.glb' : 'lens_powermap.glb';
@@ -355,11 +381,8 @@
     }
 
     function resetViewer(){
-      if (!initialCameraOrbit || !initialCameraTarget || !initialFieldOfView) return;
-      viewer.cameraOrbit = `${initialCameraOrbit.theta}rad ${initialCameraOrbit.phi}rad ${initialCameraOrbit.radius}m`;
-      viewer.cameraTarget = `${initialCameraTarget.x}m ${initialCameraTarget.y}m ${initialCameraTarget.z}m`;
-      viewer.fieldOfView = initialFieldOfView;
-      if (viewer.jumpCameraToGoal) viewer.jumpCameraToGoal();
+      const initialView = initialViewByMode[currentMode];
+      applyView(initialView);
     }
 
     transparentBtn.addEventListener('click', () => setMode('transparent'));
